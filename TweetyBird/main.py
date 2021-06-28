@@ -1,9 +1,16 @@
 #from keep_alive import keep_alive
+#For replit databases
 from replit import db
-import discord
+#For WeBhooks
+from discord import Webhook, AsyncWebhookAdapter
+import aiohttp
+#For Secret Keys
 import os
+#For Discord Bot
 from discord.ext import commands
+#For Twitter API
 import tweepy
+#For Regex
 import re
 
 
@@ -13,7 +20,7 @@ Twitter_API_PK = os.environ['Twitter_API_PK']
 Twitter_API_SK = os.environ['Twitter_API_SK']
 Twitter_Access_Token = os.environ['Twitter_Access_Token']
 Twitter_Access_Secret = os.environ['Twitter_Access_Secret']
-BotTestingWebhookURL = os.environ['Discord_WebHook']
+Discord_Webhook = os.environ['Discord_WebHook']
 
 #Descriptions
 TweetyBirdDesc = "TweetyBird Discord Bot - By SamH."
@@ -23,10 +30,6 @@ ListUsersDescription = "See what twitter accounts are being followed"
 
 #Regex Cached URL Finder
 p = re.compile('(https://t.co/[a-zA-Z0-9]{10})')
-
-#Discord WebHook integration
-
-webhook = discord.Webhook.from_url(BotTestingWebhookURL,adapter=discord.RequestsWebhookAdapter())
 
 ########FUNCTION DEFINITIONS#############
 
@@ -109,6 +112,18 @@ def GetRecentTweet(user):
     else:
       return "Twitter Account Does not Exist"
 
+def PrepTweet(status):
+    print(status.id)
+    username = api.get_user(status.id)
+    print(username)
+    print(status.text)
+    return "New Tweet from: {}\n\n{}".format(username,status.text)
+
+async def foo(message):
+  async with aiohttp.ClientSession as session:
+    webhook = Webhook.from_url(Discord_Webhook, adapter=AsyncWebhookAdapter(session))
+    await webhook.send(message)
+
 
 ########END FUNCTION DEFINITIONS#############
 
@@ -130,14 +145,13 @@ except:
 #Tweepy Streaming tweets
 class MyStreamListener(tweepy.StreamListener):
     def on_status(self, status):
-        print(status.text)
-        webhook.send(status.text) 
+        foo(PrepTweet(status)) 
 
 
 
 myStreamListener = MyStreamListener()
 myStream = tweepy.Stream(auth=api.auth, listener=myStreamListener)
-myStream.filter(follow=db["TwitterFollows"], is_async=True)
+myStream.filter(follow=db["TwitterFollows"], is_async=True, filter_level="medium")
 
 
 ########DISCORD COMMAND DEFINITIONS#############
