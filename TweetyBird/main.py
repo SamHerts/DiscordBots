@@ -23,8 +23,11 @@ ListUsersDescription = "See what twitter accounts are being followed"
 
 #Add a username to the follow list
 def update_Following(TwitterUser):
+  if ValidUser(TwitterUser):
+    #Ensure database key exists
     if "TwitterFollows" in db.keys():
         TwitterFollows = db["TwitterFollows"]
+        #Check for duplicates
         if (TwitterUser in TwitterFollows):
             return "Twitter User already in Subscription List"
         else:
@@ -32,8 +35,19 @@ def update_Following(TwitterUser):
             db["TwitterFollows"] = TwitterFollows
             return 'Adding ' + TwitterUser + ' to Follow List'
     else:
+      #Create new database key
         db["TwitterFollows"] = [TwitterUser]
         return 'Adding ' + TwitterUser + ' to Follow List'
+  else:
+    return "Not a valid Twitter Account"
+
+def ValidUser(user):
+  try:
+    api.get_user(user).id
+    return True
+  except Exception:
+    return False
+  
 
 
 #Remove a username from the follow list
@@ -56,7 +70,7 @@ def get_Following():
         if len(TwitterFollows) == 0:
             return emptyFollows
         else:
-            return " ,".join(TwitterFollows)
+            return ", ".join(TwitterFollows)
     else:
         return emptyFollows
 
@@ -71,8 +85,15 @@ def Get_Follow_IDs(api):
         else:
             for username in TwitterFollows:
                 username_list.append(api.get_user(username).id_str)
+        return username_list
     else:
         return ""
+
+def LookUp(user):
+  if ValidUser(user):
+    return api.get_user(user).screen_name
+  else:
+    return "Twitter Account Does not Exist"
 
 
 ########END FUNCTION DEFINITIONS#############
@@ -94,15 +115,15 @@ except:
 
 
 #Tweepy Streaming tweets
-class MyStreamListener(tweepy.StreamListener):
+"""class MyStreamListener(tweepy.StreamListener):
     def on_status(self, status):
         print(status.text)
 
 
 myStreamListener = MyStreamListener()
 myStream = tweepy.Stream(auth=api.auth, listener=myStreamListener)
-myStream.filter(follow=Get_Follow_IDs(), is_async=True)
-
+myStream.filter(follow=Get_Follow_IDs(api), is_async=True)
+"""
 
 #Discord Bot Ready and Commands
 @bot.event
@@ -129,11 +150,13 @@ async def UnFollow(ctx, user: str):
 
 @bot.command(description=ListUsersDescription)
 async def ListUsers(ctx):
-    print('Listing Subscription List')
+    print('Got ListUsers Command')
     await ctx.send(get_Following())
 
-
-
+@bot.command()
+async def lookup(ctx, user: str):
+    print('Got Lookup Command')
+    await ctx.send(LookUp(user))
 
 
 #keep_alive()
