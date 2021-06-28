@@ -5,8 +5,6 @@ import os
 from discord.ext import commands
 import tweepy
 
-
-
 #Secret Keys
 Discord_Token = os.environ['Discord_Token']
 Twitter_API_PK = os.environ['Twitter_API_PK']
@@ -19,35 +17,38 @@ TweetyBirdDesc = "TweetyBird Discord Bot - By SamH."
 FollowDescription = "Add a twitter account to the subscription list"
 UnFollowDescription = "Remove a twitter account from the subscription list"
 ListUsersDescription = "See what twitter accounts are being followed"
+
 ########FUNCTION DEFINITIONS#############
+
 
 #Add a username to the follow list
 def update_Following(TwitterUser):
-  if ValidUser(TwitterUser):
-    #Ensure database key exists
-    if "TwitterFollows" in db.keys():
-        TwitterFollows = db["TwitterFollows"]
-        #Check for duplicates
-        if (TwitterUser in TwitterFollows):
-            return "Twitter User already in Subscription List"
+    if ValidUser(TwitterUser):
+        TwitterUser_ID_STR = api.get_user(TwitterUser).id_str
+        #Ensure database key exists
+        if "TwitterFollows" in db.keys():
+            TwitterFollows = db["TwitterFollows"]
+            #Check for duplicates
+            if (TwitterUser_ID_STR in TwitterFollows):
+                return "Twitter User already in Subscription List"
+            else:
+                TwitterFollows.append(TwitterUser_ID_STR)
+                db["TwitterFollows"] = TwitterFollows
+                return 'Adding ' + TwitterUser + ' to Follow List'
         else:
-            TwitterFollows.append(TwitterUser)
-            db["TwitterFollows"] = TwitterFollows
+            #Create new database key
+            db["TwitterFollows"] = [TwitterUser_ID_STR]
             return 'Adding ' + TwitterUser + ' to Follow List'
     else:
-      #Create new database key
-        db["TwitterFollows"] = [TwitterUser]
-        return 'Adding ' + TwitterUser + ' to Follow List'
-  else:
-    return "Not a valid Twitter Account"
+        return "Not a valid Twitter Account"
+
 
 def ValidUser(user):
-  try:
-    api.get_user(user).id
-    return True
-  except Exception:
-    return False
-  
+    try:
+        api.get_user(user).id
+        return True
+    except Exception:
+        return False
 
 
 #Remove a username from the follow list
@@ -64,13 +65,15 @@ def delete_Following(TwitterUser):
 #Print a list of followed users
 def get_Following():
     emptyFollows = "You do not currently follow any Twitter Users. Use '!Follow $AccountName' to subscribe to their tweets."
-
+    username_list = []
     if "TwitterFollows" in db.keys():
-        TwitterFollows = db["TwitterFollows"]
-        if len(TwitterFollows) == 0:
+        TwitterFollows_ID = db["TwitterFollows"]
+        if len(TwitterFollows_ID) == 0:
             return emptyFollows
         else:
-            return ", ".join(TwitterFollows)
+            for userID in TwitterFollows_ID:
+                username_list.append(api.get_user(userID).screen_name)
+            return ", ".join(username_list)
     else:
         return emptyFollows
 
@@ -89,11 +92,12 @@ def Get_Follow_IDs(api):
     else:
         return ""
 
+
 def LookUp(user):
-  if ValidUser(user):
-    return api.get_user(user).screen_name
-  else:
-    return "Twitter Account Does not Exist"
+    if ValidUser(user):
+        return api.get_user(user).screen_name
+    else:
+        return "Twitter Account Does not Exist"
 
 
 ########END FUNCTION DEFINITIONS#############
@@ -113,7 +117,6 @@ try:
 except:
     print("Error during authentication")
 
-
 #Tweepy Streaming tweets
 """class MyStreamListener(tweepy.StreamListener):
     def on_status(self, status):
@@ -124,6 +127,7 @@ myStreamListener = MyStreamListener()
 myStream = tweepy.Stream(auth=api.auth, listener=myStreamListener)
 myStream.filter(follow=Get_Follow_IDs(api), is_async=True)
 """
+
 
 #Discord Bot Ready and Commands
 @bot.event
@@ -152,6 +156,7 @@ async def UnFollow(ctx, user: str):
 async def ListUsers(ctx):
     print('Got ListUsers Command')
     await ctx.send(get_Following())
+
 
 @bot.command()
 async def lookup(ctx, user: str):
