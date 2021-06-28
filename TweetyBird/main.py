@@ -13,7 +13,7 @@ Twitter_API_PK = os.environ['Twitter_API_PK']
 Twitter_API_SK = os.environ['Twitter_API_SK']
 Twitter_Access_Token = os.environ['Twitter_Access_Token']
 Twitter_Access_Secret = os.environ['Twitter_Access_Secret']
-BotTestingWebhookURL = ""
+BotTestingWebhookURL = os.environ['Discord_WebHook']
 
 #Descriptions
 TweetyBirdDesc = "TweetyBird Discord Bot - By SamH."
@@ -24,7 +24,9 @@ ListUsersDescription = "See what twitter accounts are being followed"
 #Regex Cached URL Finder
 p = re.compile('(https://t.co/[a-zA-Z0-9]{10})')
 
-webhook = discord.Webhook.from_url(BotTestingWebhookURL,adapter=RequestsWebhookAdapter())
+#Discord WebHook integration
+
+webhook = discord.Webhook.from_url(BotTestingWebhookURL,adapter=discord.RequestsWebhookAdapter())
 
 ########FUNCTION DEFINITIONS#############
 
@@ -135,7 +137,7 @@ class MyStreamListener(tweepy.StreamListener):
 
 myStreamListener = MyStreamListener()
 myStream = tweepy.Stream(auth=api.auth, listener=myStreamListener)
-myStream.filter(follow=["1342475881655259136"], is_async=True)
+myStream.filter(follow=db["TwitterFollows"], is_async=True)
 
 
 ########DISCORD COMMAND DEFINITIONS#############
