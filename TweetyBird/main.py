@@ -4,6 +4,8 @@ import discord
 import os
 from discord.ext import commands
 import tweepy
+import re
+
 
 #Secret Keys
 Discord_Token = os.environ['Discord_Token']
@@ -11,12 +13,18 @@ Twitter_API_PK = os.environ['Twitter_API_PK']
 Twitter_API_SK = os.environ['Twitter_API_SK']
 Twitter_Access_Token = os.environ['Twitter_Access_Token']
 Twitter_Access_Secret = os.environ['Twitter_Access_Secret']
+BotTestingWebhookURL = "https://discord.com/api/webhooks/859163753017901107/Qq78eRWL6YomGL249MVBOZgBXBdEHJ3p8wBkY0ojQLcBjWAm9tQtPJ2P3Z2UBFnjbZwD"
 
 #Descriptions
 TweetyBirdDesc = "TweetyBird Discord Bot - By SamH."
 FollowDescription = "Add a twitter account to the subscription list"
 UnFollowDescription = "Remove a twitter account from the subscription list"
 ListUsersDescription = "See what twitter accounts are being followed"
+
+#Regex Cached URL Finder
+p = re.compile('(https://t.co/[a-zA-Z0-9]{10})')
+
+webhook = discord.Webhook.from_url(BotTestingWebhookURL,adapter=RequestsWebhookAdapter())
 
 ########FUNCTION DEFINITIONS#############
 
@@ -42,7 +50,7 @@ def update_Following(TwitterUser):
     else:
         return "Not a valid Twitter Account"
 
-
+#Check if user exists
 def ValidUser(user):
     try:
         api.get_user(user).id
@@ -54,8 +62,9 @@ def ValidUser(user):
 #Remove a username from the follow list
 def delete_Following(TwitterUser):
     TwitterFollows = db["TwitterFollows"]
-    if TwitterUser in TwitterFollows:
-        del TwitterFollows[TwitterFollows.index(TwitterUser)]
+    Twitteruser_ID = api.get_user(TwitterUser).id_str
+    if Twitteruser_ID in TwitterFollows:
+        del TwitterFollows[TwitterFollows.index(Twitteruser_ID)]
         db["TwitterFollows"] = TwitterFollows
         return "User was successfully removed!"
     else:
@@ -77,27 +86,26 @@ def get_Following():
     else:
         return emptyFollows
 
-
-def Get_Follow_IDs(api):
-    #Take in list of usernames -- return list of user IDs
-    username_list = []
-    if "TwitterFollows" in db.keys():
-        TwitterFollows = db["TwitterFollows"]
-        if len(TwitterFollows) == 0:
-            return ""
-        else:
-            for username in TwitterFollows:
-                username_list.append(api.get_user(username).id_str)
-        return username_list
-    else:
-        return ""
-
-
 def LookUp(user):
     if ValidUser(user):
         return api.get_user(user).screen_name
     else:
         return "Twitter Account Does not Exist"
+
+def GetRecentTweetURL(user):
+    tweetURL = GetRecentTweet(user)
+    if tweetURL == "Twitter Account Does not Exist":
+      return tweetURL
+    else:
+      m = p.search(tweetURL)
+      return m.group()
+    
+
+def GetRecentTweet(user):
+    if ValidUser(user):
+      return api.user_timeline(api.get_user(user).id, count=1)[0].text
+    else:
+      return "Twitter Account Does not Exist"
 
 
 ########END FUNCTION DEFINITIONS#############
@@ -118,16 +126,19 @@ except:
     print("Error during authentication")
 
 #Tweepy Streaming tweets
-"""class MyStreamListener(tweepy.StreamListener):
+class MyStreamListener(tweepy.StreamListener):
     def on_status(self, status):
         print(status.text)
+        webhook.send(status.text) 
+
 
 
 myStreamListener = MyStreamListener()
 myStream = tweepy.Stream(auth=api.auth, listener=myStreamListener)
-myStream.filter(follow=Get_Follow_IDs(api), is_async=True)
-"""
+myStream.filter(follow=["1342475881655259136"], is_async=True)
 
+
+########DISCORD COMMAND DEFINITIONS#############
 
 #Discord Bot Ready and Commands
 @bot.event
@@ -162,6 +173,21 @@ async def ListUsers(ctx):
 async def lookup(ctx, user: str):
     print('Got Lookup Command')
     await ctx.send(LookUp(user))
+
+@bot.command()
+async def RecentTweet(ctx, user: str):
+    print('Got RecentTweet Command')
+    await ctx.send(GetRecentTweet(user))
+
+@bot.command()
+async def GetTweets(ctx):
+  TwitterFollows = db["TwitterFollows"]
+  for user in TwitterFollows:
+    await ctx.send(GetRecentTweetURL(user))
+
+
+########END DISCORD COMMAND DEFINITIONS#############
+
 
 
 #keep_alive()
