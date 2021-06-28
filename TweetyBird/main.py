@@ -13,7 +13,7 @@ Twitter_API_PK = os.environ['Twitter_API_PK']
 Twitter_API_SK = os.environ['Twitter_API_SK']
 Twitter_Access_Token = os.environ['Twitter_Access_Token']
 Twitter_Access_Secret = os.environ['Twitter_Access_Secret']
-BotTestingWebhookURL = "https://discord.com/api/webhooks/859163753017901107/Qq78eRWL6YomGL249MVBOZgBXBdEHJ3p8wBkY0ojQLcBjWAm9tQtPJ2P3Z2UBFnjbZwD"
+BotTestingWebhookURL = ""
 
 #Descriptions
 TweetyBirdDesc = "TweetyBird Discord Bot - By SamH."
