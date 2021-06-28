@@ -1,16 +1,56 @@
-from keep_alive import keep_alive
+#from keep_alive import keep_alive
 from replit import db
 import discord
 import os
 from discord.ext import commands
+import tweepy
 
-
-client = discord.Client()
+#client = discord.Client()
 Discord_Token = os.environ['Discord_Token']
 Twitter_API_PK = os.environ['Twitter_API_PK']
 Twitter_API_SK = os.environ['Twitter_API_SK']
+Twitter_Access_Token = os.environ['Twitter_Access_Token']
+Twitter_Access_Secret = os.environ['Twitter_Access_Secret']
+TweetyBirdDesc = "TweetyBird Discord Bot - By SamH."
+FollowDescription = "Add a twitter account to the subscription list"
+UnFollowDescription = "Remove a twitter account from the subscription list"
+ListUsersDescription = "See what twitter accounts are being followed"
 
-bot = commands.Bot(command_prefix='!')
+bot = commands.Bot(command_prefix='!', case_insensitive=True, description=TweetyBirdDesc)
+auth = tweepy.OAuthHandler(Twitter_API_PK,Twitter_API_SK)
+auth.set_access_token(Twitter_Access_Token,Twitter_Access_Secret)
+api = tweepy.API(auth)
+
+try:
+    api.verify_credentials()
+    print("Authentication OK")
+except:
+    print("Error during authentication")
+
+@bot.event
+async def on_ready():
+    print('Logged in as')
+    print(bot.user.name)
+    print(bot.user.id)
+    print('------')
+
+
+@bot.command(description=FollowDescription)
+async def Follow(ctx, user: str):
+    print('Got Follow Command')
+    print(user)
+    await ctx.send(update_Following(user))
+
+@bot.command(description=UnFollowDescription)
+async def UnFollow(ctx, user: str):
+    print('Got UnFollow Command')
+    print(user)
+    await ctx.send(delete_Following(user))
+
+@bot.command(description=ListUsersDescription)
+async def ListUsers(ctx):
+    print('Listing Subscription List')
+    await ctx.send(get_Following())
 
 
 def update_Following(TwitterUser):
@@ -21,9 +61,10 @@ def update_Following(TwitterUser):
         else:
             TwitterFollows.append(TwitterUser)
             db["TwitterFollows"] = TwitterFollows
-            return 'Adding' + TwitterUser + ' to Follow List'
+            return 'Adding ' + TwitterUser + ' to Follow List'
     else:
         db["TwitterFollows"] = [TwitterUser]
+        return 'Adding ' + TwitterUser + ' to Follow List'
 
 
 def delete_Following(TwitterUser):
@@ -37,50 +78,16 @@ def delete_Following(TwitterUser):
 
 
 def get_Following():
+    emptyFollows = "You do not currently follow any Twitter Users. Use '!Follow $AccountName' to subscribe to their tweets."
+
     if "TwitterFollows" in db.keys():
-      TwitterFollows = db["TwitterFollows"]
-      MyUsers = ""
-      for User in TwitterFollows:
-        MyUsers += User + ", "
-      return MyUsers
+        TwitterFollows = db["TwitterFollows"]
+        if len(TwitterFollows) == 0:
+            return emptyFollows
+        else:
+            return " ,".join(TwitterFollows)
     else:
-        return "You do not currently follow any Twitter Users. Use '!FollowUser $AccountName' to subscribe to their tweets."
+        return emptyFollows
 
-
-def Get_Help():
-    return "TweetyBird Discord Bot - By SamH. Available commands:\n!Follow $Username ---Add a twitter account to the subscription list.\n!ListUsers -- List all currently subscribed twitter accounts.\n"
-
-
-
-@bot.command()
-async def test(ctx, *args):
-    await ctx.send('{} arguments: {}'.format(len(args), ', '.join(args)))
-
-@client.event
-async def on_ready():
-    print('We have logged in as {0.user}'.format(client))
-
-@bot.command()
-async def Help(ctx):
-  await ctx.send("Helping you!")
-
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
-
-    msg = message.content
-
-    if msg.startswith('!Follow'):
-        User = msg.split("!Follow", 1)[1]        
-        await message.channel.send(update_Following(User))        
-
-    if msg.startswith('!ListUsers'):        
-      await message.channel.send(get_Following())
-
-    if msg.startswith('!Unfollow'):
-        removed = msg.split("!Unfollow", 1)[1]
-        await message.channel.send(delete_Following(removed))    
-
-keep_alive()
-client.run(Discord_Token)
+#keep_alive()
+bot.run(Discord_Token)
