@@ -7,12 +7,6 @@ from .settings import Twitter_API_PK, Twitter_API_SK, Twitter_Access_Token, Twit
 
 TwitterFollows = {}
 
-# Modify the default Twitter Stream, and overwrite the default on_status call
-class TwitterStreamListener(tweepy.StreamListener):
-    def on_status(self, status):
-        send_discord_message(format_tweet(status))
-
-
 # Authenticate with Twitter
 auth = tweepy.OAuthHandler(Twitter_API_PK, Twitter_API_SK)
 auth.set_access_token(Twitter_Access_Token, Twitter_Access_Secret)
@@ -22,13 +16,6 @@ try:
     print("Authentication OK")
 except Exception:
     print("Error during authentication")
-
-# Tweepy Stream setup
-myStreamListener = TwitterStreamListener()
-myStream = tweepy.Stream(auth=api.auth, listener=myStreamListener)
-
-# Filter requires list of ID's and a filter level (none, low, medium, high)
-myStream.filter(follow=TwitterFollows, is_async=True, filter_level="medium")
 
 #Regex Cached Twitter URL Finder
 p = re.compile('(https://t.co/[a-zA-Z0-9]{10})')
