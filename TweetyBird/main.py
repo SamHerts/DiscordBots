@@ -1,14 +1,13 @@
 from discord.ext import commands
-from replit import db
 
 from . import constants, settings, twitter_utils
+
 
 
 #Discord Bot Setup
 bot = commands.Bot(command_prefix='!',
                    case_insensitive=True,
                    description=constants.TweetyBirdDesc)
-
 
 @bot.event
 async def on_ready():

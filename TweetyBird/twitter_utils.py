@@ -1,11 +1,11 @@
 import re
 
-from replit import db
 import tweepy
 
 from .discord_utils import send_discord_message
 from .settings import Twitter_API_PK, Twitter_API_SK, Twitter_Access_Token, Twitter_Access_Secret
 
+TwitterFollows = {}
 
 # Modify the default Twitter Stream, and overwrite the default on_status call
 class TwitterStreamListener(tweepy.StreamListener):
@@ -28,35 +28,25 @@ myStreamListener = TwitterStreamListener()
 myStream = tweepy.Stream(auth=api.auth, listener=myStreamListener)
 
 # Filter requires list of ID's and a filter level (none, low, medium, high)
-myStream.filter(follow=db["TwitterFollows"], is_async=True, filter_level="medium")
+myStream.filter(follow=TwitterFollows, is_async=True, filter_level="medium")
 
-#Regex Cached URL Finder
+#Regex Cached Twitter URL Finder
 p = re.compile('(https://t.co/[a-zA-Z0-9]{10})')
 
 
 def update_following(twitter_user):
     """
     If the provided user is a valid Twitter user:
-      - Add the user to the following
-      - Init db if this is the first user
+      - Add the user to the following list      
     """
     msg = "Not a valid Twitter Account"
     if is_valid_twitter_user(twitter_user):
-        twitter_user_id_string = api.get_user(twitter_user).id_str
-        # Ensure database key exists
-        if "TwitterFollows" in db.keys():
-            following = db["TwitterFollows"]
-            # Check for duplicates
-            if twitter_user_id_string in following:
-                msg = "Twitter User already in Subscription List"
-            else:
-                following.append(twitter_user_id_string)
-                db["TwitterFollows"] = following
-                msg = 'Adding ' + twitter_user + ' to Follow List'
+        twitter_user = api.get_user(twitter_user)
+        if twitter_user.id in TwitterFollows:
+            msg = "Twitter User already in Subscription List"
         else:
-            # Create new database key
-            db["TwitterFollows"] = [twitter_user_id_string]
-            msg = 'Adding ' + twitter_user + ' to Follow List'
+            msg = 'Adding {} to Follow List'.format(twitter_user.name)
+            TwitterFollows.update({twitter_user.id,twitter_user.name})       
     return msg
 
 
@@ -80,28 +70,24 @@ def remove_user_from_following(twitter_user):
     """
     msg = "Twitter Account does not exist"
     if is_valid_twitter_user(twitter_user):
-        following = db["TwitterFollows"]
-        twitter_user_id = api.get_user(twitter_user).id_str
-        if twitter_user_id in following:
-            del following[following.index(twitter_user_id)]
-            db["TwitterFollows"] = following
-            msg = "User was successfully removed!"
+        twitter_user = api.get_user(twitter_user)
+        if twitter_user.id in TwitterFollows:
+            TwitterFollows.pop(twitter_user.id)
+            msg = "{} was removed from the Subscription List".format(twitter_user.name)
         else:
-            msg = "User was not found in the subscription list."
+            msg = 'You were not Subscribed to {}\'s  tweets.'.format(twitter_user.name)      
     return msg
 
 
 def get_following():
     """
     Gets the list of followers and returns a string list of their screen names.
-    """
-    msg = "You do not currently follow any Twitter Users. Use '!Follow $AccountName' to subscribe to their tweets."
-    # Ensure db exists
-    if "TwitterFollows" in db.keys():
-        following = db["TwitterFollows"]
-        if len(following) > 0:
-            # Convert twitter ID to username and return a list
-            msg = ', '.join([api.get_user(uid).screen_name for uid in following])
+    """    
+    if not TwitterFollows:
+        msg = "You do not currently follow any Twitter Users. Use '!Follow $AccountName' to subscribe to tweets."
+    else:
+        for user in TwitterFollows:
+            msg = ', '.join(user.name)   
     return msg
 
 
@@ -116,23 +102,24 @@ def look_up_twitter_user(user):
     return msg
 
 
-def get_recent_tweet_from_user(user):
+def get_recent_tweet_from_user(user,validated):
     """
     Gets most recent tweet from a user.
     """
-    msg = "Twitter account does not exist"
-    if is_valid_twitter_user(user):
-        # this could get cleaned up
-        uid = api.get_user(user).id
-        msg = api.user_timeline(uid, count=1)[0].text
+    msg = "Twitter Account does not exist"
+    if validated:
+        msg = api.user_timeline(user.id, count=1)[0].text
+    else:
+        if is_valid_twitter_user(user):                  
+            msg = api.user_timeline(api.get_user(user).id, count=1)[0].text
     return msg
 
 
-def get_most_recent_tweet_url(user):
+def get_most_recent_tweet_url(user, validated):
     """
     Gets the most recent tweet url from a user.
     """
-    tweet_url = get_recent_tweet_from_user(user)
+    tweet_url = get_recent_tweet_from_user(user,validated)
     if tweet_url == "Twitter Account Does not Exist":
         return tweet_url
     else:
@@ -145,8 +132,7 @@ def format_tweet(status):
     """
     Gets a tweet and formats it.
     """
-    print(status.id)
-    username = api.get_user(status.id)
-    print(username)
+    print(status.id)    
+    print(status.user.name)
     print(status.text)
-    return f"New Tweet from: {username}\n\n{status.text}"
+    return f"New Tweet from: {status.user.name}\n\n{status.text}"
