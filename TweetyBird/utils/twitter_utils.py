@@ -2,15 +2,33 @@ import re
 
 import tweepy
 
-from utils.discord_utils import send_discord_message
-from utils.settings import Twitter_API_PK, Twitter_API_SK, Twitter_Access_Token, Twitter_Access_Secret
+from .settings import Twitter_API_PK, Twitter_API_SK, Twitter_Access_Token, Twitter_Access_Secret
+from .file_utils import open_json_file, save_json_file
 
-TwitterFollows = {}
+
+# Persistent data
+twitter_json_file = './data/twitter.json'
+TwitterFollows = open_json_file('./data/twitter.json')
 
 # Authenticate with Twitter
 auth = tweepy.OAuthHandler(Twitter_API_PK, Twitter_API_SK)
 auth.set_access_token(Twitter_Access_Token, Twitter_Access_Secret)
 api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
+
+
+def is_valid_twitter_user(user):
+    """
+    Tries to retrieve a user using the Tweepy api. If it fails,
+    then the user is not valid.
+    """
+    retrieved_user = None
+    try:
+        retrieved_user = api.get_user(user)
+        print(f"Valid Twitter user: {retrieved_user.screen_name}")
+    except Exception as err:
+        print(f'Probably not a valid user: {err}')
+    return retrieved_user is not None
+
 
 def Verify_Twitter_Credentials():
     try:
@@ -19,10 +37,12 @@ def Verify_Twitter_Credentials():
     except Exception:
         print("Error during authentication")
 
-#Regex Cached Twitter URL Finder
+
+# Regex Cached Twitter URL Finder
 p = re.compile('(https://t.co/[a-zA-Z0-9]{10})')
 
 
+@save_json_file(filepath=twitter_json_file, contents=TwitterFollows)
 def update_following(twitter_user):
     """
     If the provided user is a valid Twitter user:
@@ -43,20 +63,7 @@ def update_following(twitter_user):
     return msg
 
 
-def is_valid_twitter_user(user):
-    """
-    Tries to retrieve a user using the Tweepy api. If it fails,
-    then the user is not valid.
-    """
-    retrieved_user = None
-    try:
-        retrieved_user = api.get_user(user)
-        print(f"Valid Twitter user: {retrieved_user.screen_name}")
-    except Exception as err:
-        print(f'Probably not a valid user: {err}')
-    return retrieved_user is not None
-
-
+@save_json_file(filepath=twitter_json_file, contents=TwitterFollows)
 def remove_user_from_following(twitter_user):
     """
     If a valid twitter user is provided:
@@ -108,8 +115,6 @@ def get_recent_tweet_from_user(user):
         msg = api.user_timeline(api.get_user(user).id, count=1)[0].text  
     elif isinstance(user, str) and is_valid_twitter_user(user):
         msg = api.user_timeline(api.get_user(user).id, count=1)[0].text
-
-
 
     return msg
 
