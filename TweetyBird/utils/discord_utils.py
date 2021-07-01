@@ -2,7 +2,7 @@ import aiohttp
 
 from discord import Webhook, AsyncWebhookAdapter
 
-from .settings import Discord_Webhook
+from utils.settings import Discord_Webhook
 
 
 async def send_discord_message(message):

@@ -1,5 +1,6 @@
 import os
-
+from dotenv import load_dotenv
+load_dotenv(verbose=True)
 
 Discord_Token = os.getenv('Discord_Token', None)
 Twitter_API_PK = os.getenv('Twitter_API_PK', None)
