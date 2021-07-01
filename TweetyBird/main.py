@@ -1,13 +1,23 @@
-from discord.ext import commands
+from discord.ext import commands, tasks
 
-from . import constants, settings, twitter_utils
+from dotenv import load_dotenv
+
+from utils import constants, discord_utils, settings, twitter_utils
 
 
 
 #Discord Bot Setup
+
 bot = commands.Bot(command_prefix='!',
                    case_insensitive=True,
                    description=constants.TweetyBirdDesc)
+
+@tasks.loop(seconds=60)
+async def post_Tweets():
+    print("Running Loop------\n")
+    for user in twitter_utils.TwitterFollows:
+        discord_utils.send_discord_message(twitter_utils.get_recent_tweet_from_user(user))
+
 
 @bot.event
 async def on_ready():
@@ -19,6 +29,11 @@ async def on_ready():
     print(bot.user.id)
     print('------')
 
+@bot.command()
+async def GetAll():
+    print("Got GetAll Command")
+    for user in twitter_utils.TwitterFollows:
+        discord_utils.send_discord_message(twitter_utils.get_recent_tweet_from_user(user))
 
 @bot.command(description=constants.FollowDescription)
 async def follow(ctx, user: str):
@@ -66,16 +81,5 @@ async def recent_tweet(ctx, user: str):
     print('Got RecentTweet Command')
     await ctx.send(twitter_utils.get_recent_tweet_from_user(user))
 
-
-@bot.command()
-async def get_tweet(ctx):
-    """
-    Gets tweets from every user in following list.
-
-    """
-    following = db["TwitterFollows"]
-    for user in following:
-        await ctx.send(twitter_utils.get_most_recent_tweet_url(user))
-
-
+twitter_utils.Verify_Twitter_Credentials()
 bot.run(settings.Discord_Token)
