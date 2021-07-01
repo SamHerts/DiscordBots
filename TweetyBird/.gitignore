@@ -1,2 +1,4 @@
 #Environment Files
 .env
+__pycache__/
+*.py[cod]
