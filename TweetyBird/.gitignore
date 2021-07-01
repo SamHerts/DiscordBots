@@ -1,4 +1,5 @@
 #Environment Files
+.env
 utils/.env
 
 utils/__pycache__
