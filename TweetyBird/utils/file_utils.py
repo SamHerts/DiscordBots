@@ -18,8 +18,9 @@ def open_json_file(filepath):
 def save_json_file(filepath, contents):
     def decorator(func):
         def wrapper(*args, **kwargs):
-            func(*args, **kwargs)
+            result = func(*args, **kwargs)
             with open(filepath, 'w') as file:
                 file.write(json.dumps(contents))
+            return result
         return wrapper
     return decorator
