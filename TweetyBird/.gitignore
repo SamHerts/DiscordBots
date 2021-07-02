@@ -1,7 +1,0 @@
-#Environment Files
-.env
-utils/.env
-
-utils/__pycache__
-.vscode/settings.json
-.vscode
