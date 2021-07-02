@@ -16,7 +16,7 @@ bot = commands.Bot(command_prefix='!',
 async def post_Tweets():
     print("Running Loop------\n")
     for user in twitter_utils.TwitterFollows:
-        discord_utils.send_discord_message(twitter_utils.get_recent_tweet_from_user(user))
+        discord_utils.send_discord_message(twitter_utils.format_tweet(twitter_utils.get_recent_tweet_from_user(user)))
 
 
 @bot.event
@@ -33,7 +33,7 @@ async def on_ready():
 async def GetAll():
     print("Got GetAll Command")
     for user in twitter_utils.TwitterFollows:
-        discord_utils.send_discord_message(twitter_utils.get_recent_tweet_from_user(user))
+        discord_utils.send_discord_message(twitter_utils.format_tweet(twitter_utils.get_recent_tweet_from_user(user)))
 
 @bot.command(description=constants.FollowDescription)
 async def follow(ctx, user: str):
@@ -79,7 +79,7 @@ async def recent_tweet(ctx, user: str):
     Gets the most recent tweet of a specified twitter account.
     """
     print('Got RecentTweet Command')
-    await ctx.send(twitter_utils.get_recent_tweet_from_user(user))
+    await ctx.send(twitter_utils.format_tweet(twitter_utils.get_recent_tweet_from_user(user)))
 
 twitter_utils.Verify_Twitter_Credentials()
 bot.run(settings.Discord_Token)
