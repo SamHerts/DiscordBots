@@ -24,7 +24,7 @@ def is_valid_twitter_user(user):
     retrieved_user = None
     try:
         retrieved_user = api.get_user(user)
-        print(f"Valid Twitter user: {retrieved_user.screen_name}")
+        print(f"Valid Twitter user: {retrieved_user.name}(@{retrieved_user.screen_name})")
     except Exception as err:
         print(f'Probably not a valid user: {err}')
     return retrieved_user is not None
@@ -33,9 +33,9 @@ def is_valid_twitter_user(user):
 def Verify_Twitter_Credentials():
     try:
         api.verify_credentials()
-        print("Authentication OK")
+        print("Twitter API Authentication OK")
     except Exception:
-        print("Error during authentication")
+        print("Error during Twitter API Authentication")
 
 
 # Regex Cached Twitter URL Finder
@@ -52,14 +52,14 @@ def update_following(twitter_user):
     if is_valid_twitter_user(twitter_user):
         twitter_user = api.get_user(twitter_user)
         if not TwitterFollows:
-            msg = 'Adding {} to Follow List'.format(twitter_user.name)
-            TwitterFollows.update({twitter_user.id:twitter_user.name})
-        elif twitter_user.id in TwitterFollows:
-            msg = "Twitter User already in Subscription List" 
+            msg = f"Adding {twitter_user.name}(@{twitter_user.screen_name}) to Follow List."
+            TwitterFollows.update({twitter_user.id_str:twitter_user.name})
+        elif twitter_user.id_str in TwitterFollows:
+            msg = f"{twitter_user.name}(@{twitter_user.screen_name} is already in Subscription List." 
         else:
-            msg = 'Adding {} to Follow List'.format(twitter_user.name)
-            TwitterFollows.update({twitter_user.id:twitter_user.name})
-    print(f"TwitterFollows Dictionary: {TwitterFollows}")                     
+            msg = f"Adding {twitter_user.name}(@{twitter_user.screen_name}) to Follow List."
+            TwitterFollows.update({twitter_user.id_str:twitter_user.name})
+    print(msg)                    
     return msg
 
 
@@ -72,11 +72,11 @@ def remove_user_from_following(twitter_user):
     msg = "Twitter Account does not exist"
     if is_valid_twitter_user(twitter_user):
         twitter_user = api.get_user(twitter_user)
-        if twitter_user.id in TwitterFollows:
-            TwitterFollows.pop(twitter_user.id)
-            msg = "{} was removed from the Subscription List".format(twitter_user.name)
+        if twitter_user.id_str in TwitterFollows:
+            TwitterFollows.pop(twitter_user.id_str)
+            msg = f"{twitter_user.name}(@{twitter_user.screen_name}) was removed from Subscription List."
         else:
-            msg = 'You were not Subscribed to {}\'s  tweets.'.format(twitter_user.name)      
+            msg = f"You are not subscribed to{twitter_user.name}(@{twitter_user.screen_name})."   
     return msg
 
 
@@ -87,7 +87,7 @@ def get_following():
     if not TwitterFollows:
         msg = "You do not currently follow any Twitter Users. Use '!Follow $AccountName' to subscribe to tweets."
     else:
-        msg = ', '.join(TwitterFollows.values())               
+        msg = ',\n'.join(TwitterFollows.values())               
     print(msg)
     return msg
 
@@ -110,12 +110,11 @@ def get_recent_tweet_from_user(user):
     """
     msg = "Twitter Account does not exist"
     if isinstance(user, tweepy.User):
-        msg = api.user_timeline(user.id, count=1)[0].text
+        msg = api.user_timeline(user.id, count=1)[0]
     elif isinstance(user,int):
-        msg = api.user_timeline(api.get_user(user).id, count=1)[0].text  
+        msg = api.user_timeline(api.get_user(user).id, count=1)[0] 
     elif isinstance(user, str) and is_valid_twitter_user(user):
-        msg = api.user_timeline(api.get_user(user).id, count=1)[0].text
-
+        msg = api.user_timeline(api.get_user(user).id, count=1)[0]
     return msg
 
 
@@ -128,7 +127,7 @@ def get_most_recent_tweet_url(user):
         return tweet_url
     else:
         # Regex to look for twitter URL
-        m = p.search(tweet_url)
+        m = p.search(tweet_url.text)
         return m.group()
 
 
@@ -139,4 +138,4 @@ def format_tweet(status):
     print(status.id)    
     print(status.user.name)
     print(status.text)
-    return f"New Tweet from: {status.user.name}\n\n{status.text}"
+    return f"New Tweet from: {status.user.name}(@{status.user.screen_name})\n\n{status.text}"
