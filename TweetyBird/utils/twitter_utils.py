@@ -59,7 +59,8 @@ def update_following(twitter_user):
         else:
             msg = f"Adding {twitter_user.name}(@{twitter_user.screen_name}) to Follow List."
             TwitterFollows.update({twitter_user.id_str:twitter_user.name})
-    print(msg)                    
+    print(f"update_following return type: {type(msg)}")   
+    print(f"update_following return value: {msg}")                  
     return msg
 
 

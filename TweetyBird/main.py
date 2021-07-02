@@ -30,7 +30,7 @@ async def on_ready():
     print('------')
 
 @bot.command()
-async def GetAll():
+async def GetAll(ctx):
     print("Got GetAll Command")
     for user in twitter_utils.TwitterFollows:
         discord_utils.send_discord_message(twitter_utils.format_tweet(twitter_utils.get_recent_tweet_from_user(user)))
@@ -42,7 +42,9 @@ async def follow(ctx, user: str):
     """
     print('Got Follow Command')
     print(user)
-    await ctx.send(twitter_utils.update_following(user))
+    msg = twitter_utils.update_following(user)
+    print(f"Message sent to discord: {msg}")
+    await ctx.send(msg)
 
 
 @bot.command(description=constants.UnFollowDescription)
