@@ -1,7 +1,7 @@
 from discord.ext import commands
 
 
-class ping(commands.cog):
+class ping(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
