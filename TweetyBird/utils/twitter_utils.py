@@ -24,7 +24,8 @@ def is_valid_twitter_user(user):
     retrieved_user = None
     try:
         retrieved_user = api.get_user(user)
-        print(f"Valid Twitter user: {retrieved_user.name}(@{retrieved_user.screen_name})")
+        print(
+            f"Valid Twitter user: {retrieved_user.name}(@{retrieved_user.screen_name})")
     except Exception as err:
         print(f'Probably not a valid user: {err}')
     return retrieved_user is not None
@@ -53,14 +54,12 @@ def update_following(twitter_user):
         twitter_user = api.get_user(twitter_user)
         if not TwitterFollows:
             msg = f"Adding {twitter_user.name}(@{twitter_user.screen_name}) to Follow List."
-            TwitterFollows.update({twitter_user.id_str:twitter_user.name})
+            TwitterFollows.update({twitter_user.id_str: twitter_user.name})
         elif twitter_user.id_str in TwitterFollows:
-            msg = f"{twitter_user.name}(@{twitter_user.screen_name} is already in Subscription List." 
+            msg = f"{twitter_user.name}(@{twitter_user.screen_name} is already in Subscription List."
         else:
             msg = f"Adding {twitter_user.name}(@{twitter_user.screen_name}) to Follow List."
-            TwitterFollows.update({twitter_user.id_str:twitter_user.name})
-    print(f"update_following return type: {type(msg)}")   
-    print(f"update_following return value: {msg}")                  
+            TwitterFollows.update({twitter_user.id_str: twitter_user.name})
     return msg
 
 
@@ -77,18 +76,18 @@ def remove_user_from_following(twitter_user):
             TwitterFollows.pop(twitter_user.id_str)
             msg = f"{twitter_user.name}(@{twitter_user.screen_name}) was removed from Subscription List."
         else:
-            msg = f"You are not subscribed to{twitter_user.name}(@{twitter_user.screen_name})."   
+            msg = f"You are not subscribed to{twitter_user.name}(@{twitter_user.screen_name})."
     return msg
 
 
 def get_following():
     """
     Gets the list of followers and returns a string list of their screen names.
-    """    
+    """
     if not TwitterFollows:
         msg = "You do not currently follow any Twitter Users. Use '!Follow $AccountName' to subscribe to tweets."
     else:
-        msg = ',\n'.join(TwitterFollows.values())               
+        msg = ',\n'.join(TwitterFollows.values())
     print(msg)
     return msg
 
@@ -112,8 +111,8 @@ def get_recent_tweet_from_user(user):
     msg = "Twitter Account does not exist"
     if isinstance(user, tweepy.User):
         msg = api.user_timeline(user.id, count=1)[0]
-    elif isinstance(user,int):
-        msg = api.user_timeline(api.get_user(user).id, count=1)[0] 
+    elif isinstance(user, int):
+        msg = api.user_timeline(api.get_user(user).id, count=1)[0]
     elif isinstance(user, str) and is_valid_twitter_user(user):
         msg = api.user_timeline(api.get_user(user).id, count=1)[0]
     return msg
@@ -131,22 +130,34 @@ def get_most_recent_tweet_url(user):
         m = p.search(tweet_url.text)
         return m.group()
 
+
 def get_subscribed_tweets():
     """
     For all subscribed users, get their most recent tweet using integer ID to circumvent validation
     """
     msg = ""
     for twit in TwitterFollows:
-        msg = msg + format_tweet(get_recent_tweet_from_user(int(twit)))+ "\n"
+        msg = msg + format_tweet(get_recent_tweet_from_user(int(twit))) + "\n"
     print(msg)
     return msg
 
 
-def format_tweet(status):
+def format_tweet(status: tweepy.Status) -> str:
     """
     Gets a tweet and formats it.
     """
-    print(status.id)    
+    print(status.id)
     print(status.user.name)
     print(status.text)
     return f"New Tweet from: {status.user.name}(@{status.user.screen_name})\n\n{status.text}"
+
+
+def getTwitUser(user: str) -> tweepy.User:
+    retrieved_user = None
+    try:
+        retrieved_user = api.get_user(user)
+        print(
+            f"Valid Twitter user: {retrieved_user.name}(@{retrieved_user.screen_name})")
+    except Exception as err:
+        print(f'Probably not a valid user: {err}')
+    return retrieved_user

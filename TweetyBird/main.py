@@ -1,10 +1,7 @@
-from discord.ext import commands, tasks
+from discord.ext import commands
 
-from dotenv import load_dotenv
 
-from utils import constants, discord_utils, settings, twitter_utils
-
-import os
+from utils import settings, twitter_utils
 
 
 # Discord Bot Setup
@@ -25,7 +22,11 @@ async def on_ready():
     print(bot.user.id)
     print('------')
 
-bot.load_extension("Cogs.mainCog")
 
-twitter_utils.Verify_Twitter_Credentials()
-bot.run(settings.Discord_Token)
+@bot.event
+async def on_command_error(ctx, error):
+    await ctx.send(error)
+
+if __name__ == "__main__":
+    bot.load_extension("Cogs.MainCog")
+    bot.run(settings.Discord_Token)
