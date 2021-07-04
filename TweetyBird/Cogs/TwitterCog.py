@@ -1,10 +1,7 @@
-from discord.ext import commands, tasks
+from discord.ext import commands
 
-from dotenv import load_dotenv
 
-from utils import constants, discord_utils, settings, twitter_utils
-
-import os
+from utils import twitter_utils
 
 
 GetAllDescription = "Retrieve most recent tweets from Subscription List"
@@ -15,7 +12,16 @@ LookUpDescription = "Retrieve the screen name of a twitter account"
 RecentTweetDescription = "Retrieve the most recent tweet from a twutter account"
 
 
-class Twitter(commands.Cog):
+class TwitIDConverter(commands.Converter):
+    async def convert(self, ctx, argument):
+        user = twitter_utils.getTwitUser(argument)
+        if user is not None:
+            return user.id_str
+
+        raise commands.BadArgument(message="Not a valid Twitter User")
+
+
+class TwitterCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -26,7 +32,7 @@ class Twitter(commands.Cog):
             await ctx.send(twitter_utils.format_tweet(twitter_utils.get_recent_tweet_from_user(user)))
 
     @commands.command(description=FollowDescription)
-    async def follow(self, ctx, user: str):
+    async def follow(self, ctx, user: TwitIDConverter):
         """
         Adds a new Twitter account to following list.
         """
@@ -71,4 +77,5 @@ class Twitter(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Twitter(bot))
+    bot.add_cog(TwitterCog(bot))
+    twitter_utils.Verify_Twitter_Credentials()
