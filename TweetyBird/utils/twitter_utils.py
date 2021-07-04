@@ -131,6 +131,16 @@ def get_most_recent_tweet_url(user):
         m = p.search(tweet_url.text)
         return m.group()
 
+def get_subscribed_tweets():
+    """
+    For all subscribed users, get their most recent tweet using integer ID to circumvent validation
+    """
+    msg = ""
+    for twit in TwitterFollows:
+        msg = msg + format_tweet(get_recent_tweet_from_user(int(twit)))+ "\n"
+    print(msg)
+    return msg
+
 
 def format_tweet(status):
     """

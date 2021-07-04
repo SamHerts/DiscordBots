@@ -12,3 +12,4 @@
 TweetyBird/utils/.env
 TweetyBird/utils/__init__.py
 TweetyBird/utils/__pycache__
+TweetyBird/Cogs/__pycache__
