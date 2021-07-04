@@ -8,10 +8,11 @@ import os
 
 
 # Discord Bot Setup
+TweetyBirdDescription = "TweetyBird Discord Bot - By SamH."
 
 bot = commands.Bot(command_prefix='!',
                    case_insensitive=True,
-                   description=constants.TweetyBirdDesc)
+                   description=TweetyBirdDescription)
 
 
 @bot.event
@@ -23,23 +24,6 @@ async def on_ready():
     print(bot.user.name)
     print(bot.user.id)
     print('------')
-
-
-@bot.command()
-async def LoadCog(ctx, extension):
-    bot.load_extension(f'Cogs.{extension}')
-
-
-@bot.command()
-async def UnLoadCog(ctx, extension):
-    bot.unload_extension(f'Cogs.{extension}')
-
-
-@bot.command()
-async def ReLoadCog(ctx, extension):
-    bot.unload_extension(f'Cogs.{extension}')
-    bot.load_extension(f'Cogs.{extension}')
-
 
 bot.load_extension("Cogs.mainCog")
 
