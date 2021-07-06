@@ -3,7 +3,7 @@ import discord
 from discord.ext import commands
 
 
-class PingCog(commands.Cog):
+class PingCog(commands.Cog, name="Ping"):
     def __init__(self, bot):
         self.bot = bot
 
