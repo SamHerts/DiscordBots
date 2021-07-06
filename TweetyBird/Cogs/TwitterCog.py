@@ -1,5 +1,5 @@
+from utils.settings import Twitter_API_PK, Twitter_API_SK, Twitter_Access_Secret, Twitter_Access_Token
 from discord.ext import commands
-
 
 from utils import twitter_utils
 
@@ -13,23 +13,18 @@ RecentTweetDescription = "Retrieve the most recent tweet from a twutter account"
 
 
 class TwitIDConverter(commands.Converter):
-    async def convert(self, ctx, argument):
+    async def convert(self, ctx: commands.Context, argument: str):
         user = twitter_utils.getTwitUser(argument)
         if user is not None:
-            return user.id_str
-
+            return user
         raise commands.BadArgument(message="Not a valid Twitter User")
 
 
-class TwitterCog(commands.Cog):
+class TwitterCog(commands.Cog, name="Twitter"):
     def __init__(self, bot):
         self.bot = bot
-
-    @commands.command(description=GetAllDescription)
-    async def GetAll(self, ctx):
-        print("Got GetAll Command")
-        for user in twitter_utils.TwitterFollows:
-            await ctx.send(twitter_utils.format_tweet(twitter_utils.get_recent_tweet_from_user(user)))
+        twitter_utils.Verify_Twitter_Credentials()
+        #twitter_utils.start_stream(reload=False)
 
     @commands.command(description=FollowDescription)
     async def follow(self, ctx, user: TwitIDConverter):
@@ -41,15 +36,19 @@ class TwitterCog(commands.Cog):
         msg = twitter_utils.update_following(user)
         print(f"Message sent to discord: {msg}")
         await ctx.send(msg)
+        #twitter_utils.start_stream(reload=True)
+        #twitter_utils.start_stream(reload=False)
 
     @commands.command(description=UnFollowDescription)
-    async def unfollow(self, ctx, user: str):
+    async def unfollow(self, ctx, user: TwitIDConverter):
         """
         Removes a twitter account from the following list.
         """
         print('Got UnFollow Command')
         print(user)
         await ctx.send(twitter_utils.remove_user_from_following(user))
+        #twitter_utils.start_stream(reload=True)
+        #twitter_utils.start_stream(reload=False)
 
     @commands.command(description=ListUsersDescription)
     async def list_users(self, ctx):
@@ -60,7 +59,7 @@ class TwitterCog(commands.Cog):
         await ctx.send(twitter_utils.get_following())
 
     @commands.command(description=LookUpDescription)
-    async def lookup(self, ctx, user: str):
+    async def lookup(self, ctx, user: TwitIDConverter):
         """
         Retrieves screen names of a twitter user.
         """
@@ -68,14 +67,18 @@ class TwitterCog(commands.Cog):
         await ctx.send(twitter_utils.look_up_twitter_user(user))
 
     @commands.command(description=RecentTweetDescription)
-    async def recent_tweet(self, ctx, user: str):
+    async def recent_tweet(self, ctx, user: TwitIDConverter):
         """
         Gets the most recent tweet of a specified twitter account.
         """
         print('Got RecentTweet Command')
-        await ctx.send(twitter_utils.format_tweet(twitter_utils.get_recent_tweet_from_user(user)))
+        twitter_utils.get_recent_tweet_from_user(user)
 
 
 def setup(bot):
     bot.add_cog(TwitterCog(bot))
-    twitter_utils.Verify_Twitter_Credentials()
+
+
+def teardown(bot):
+    # twitter_utils.kill_stream()
+    print('TwitterCog Successfully unloaded')
