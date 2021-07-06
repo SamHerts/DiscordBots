@@ -1,7 +1,7 @@
 from discord.ext import commands
 
 
-class MainCog(commands.Cog):
+class MainCog(commands.Cog, name="General"):
     def __init__(self, bot):
         self.bot = bot
 
