@@ -1,8 +1,6 @@
 from discord.ext import commands
 
-
-from utils import settings, twitter_utils
-
+from utils import settings
 
 # Discord Bot Setup
 TweetyBirdDescription = "TweetyBird Discord Bot - By SamH."
@@ -25,8 +23,10 @@ async def on_ready():
 
 @bot.event
 async def on_command_error(ctx, error):
+    print(error)
     await ctx.send(error)
 
 if __name__ == "__main__":
     bot.load_extension("Cogs.MainCog")
+    bot.load_extension("Cogs.TwitterCog")
     bot.run(settings.Discord_Token)
