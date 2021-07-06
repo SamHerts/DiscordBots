@@ -1,7 +1,7 @@
 from discord.ext import commands
 
 
-class MainCog(commands.Cog):
+class MainCog(commands.Cog, name="General"):
     def __init__(self, bot):
         self.bot = bot
 
@@ -12,10 +12,13 @@ class MainCog(commands.Cog):
         Command which Loads a Module.
         """
         try:
+            print("About to Load Cog")
             self.bot.load_extension(f'Cogs.{cog}')
+            print("Cog Loaded")
         except Exception as e:
             await ctx.send(f'**`ERROR:`** {type(e).__name__} - {e}')
         else:
+            print("Sending Success Message")
             await ctx.send('**`SUCCESS`**')
 
     @commands.command(name='unload', hidden=True)
