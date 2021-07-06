@@ -12,13 +12,10 @@ class MainCog(commands.Cog, name="General"):
         Command which Loads a Module.
         """
         try:
-            print("About to Load Cog")
             self.bot.load_extension(f'Cogs.{cog}')
-            print("Cog Loaded")
         except Exception as e:
             await ctx.send(f'**`ERROR:`** {type(e).__name__} - {e}')
         else:
-            print("Sending Success Message")
             await ctx.send('**`SUCCESS`**')
 
     @commands.command(name='unload', hidden=True)
