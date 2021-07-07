@@ -1,3 +1,5 @@
+import threading
+import time
 from re import sub, MULTILINE
 from dhooks import Embed, Webhook
 from tweepy import OAuthHandler, API, Status, Stream, User, StreamListener
@@ -26,6 +28,10 @@ class MyStreamListener(StreamListener):
     """
     Overwrites Tweepy's base streamlistener to send webhooks to discord
     """
+    def on_limit(self, track):
+        print("Rate limit exceeded, sleep for 15 mins")
+        time.sleep(15*60)
+        return True
 
     def on_status(self, status):
         """Called when a new status arrives"""
@@ -42,12 +48,14 @@ class MyStreamListener(StreamListener):
             format_tweet(status=status)
             return
         else:
-            format(status=status)
+            format_tweet(status=status)
             return
 
     def on_error(self, status_code):
         """Called when an error arrives"""
         print("Encountered streaming error (", status_code, ")")
+        if status_code == 420:
+            return self.on_limit(status_code)
 
 
 def getTwitUser(user: str) -> User:
@@ -267,7 +275,17 @@ def send_embed_webhook(avatar: str, status, link_list, text: str):
     print("Webhook posted.")
 
 
-tags = [x for x in TwitterFollows]
-streamListener = MyStreamListener()
-stream = Stream(auth=api.auth, listener=streamListener)
-stream.filter(follow=tags, is_async=True)
+def start_stream(listener):
+    stream = Stream(auth=api.auth, listener=listener)
+    while True:
+        if stream.running:
+            stream.disconnect()
+        tags = [x for x in TwitterFollows]
+        print(f'Filtering out tweets with these tags: [{tags}]')
+        stream.filter(follow=tags, is_async=True)
+        time.sleep(1 * 60)  # update filter list every 1 minute
+
+
+def load_stream():
+    background_stream_thread = threading.Thread(name='twitter_stream', target=start_stream, args=(MyStreamListener(),))
+    background_stream_thread.start()
