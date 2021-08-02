@@ -48,11 +48,13 @@ def draw_grid(grid_step, grid_height, grid_width, pixel_thickness):
     step_size = int(image.width / grid_step)
 
     for x in range(0, image.width, step_size):
-        line = ((x + int(thickness / 2) - 1, y_start), (x + (thickness / 2) - 1, y_end))
+        line = ((x + int(thickness / 2) - 1, y_start),
+                (x + (thickness / 2) - 1, y_end))
         draw.line(line, fill=(0, 0, 0, 255), width=thickness)
 
     for y in range(0, image.height, step_size):
-        line = ((x_start, y + int(thickness / 2) - 1), (x_end, y + int(thickness / 2) - 1))
+        line = ((x_start, y + int(thickness / 2) - 1),
+                (x_end, y + int(thickness / 2) - 1))
         draw.line(line, fill=(0, 0, 0, 255), width=thickness)
 
     del draw

@@ -19,3 +19,4 @@ BulletTank/Rainbow_tanks.png
 BulletTank/utils/.env
 BulletTank/utils/__pycache__
 BulletTank/utils/__init__.py
+BulletTank/Cogs/__pycache__
