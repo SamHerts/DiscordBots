@@ -13,3 +13,6 @@ TweetyBird/utils/.env
 TweetyBird/utils/__init__.py
 TweetyBird/utils/__pycache__
 TweetyBird/Cogs/__pycache__
+
+BulletTank/BoardMockup.png
+BulletTank/Rainbow_tanks.png
