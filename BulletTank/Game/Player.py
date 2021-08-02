@@ -25,13 +25,13 @@ class Player:
         Validate Direction, Action Points, and occupied, then move that direction.
         Directions are Cardinal - N,S,E,W and the four diagonals -NW, NE, SW, SE
         """
-        choices = {'N': (-1, 0),
-                   'S': (1, 0),
-                   'E': (0, 1),
-                   'W': (0, -1),
+        choices = {'W': (-1, 0),
+                   'E': (1, 0),
+                   'S': (0, 1),
+                   'N': (0, -1),
                    'NW': (-1, -1),
-                   'NE': (-1, 1),
-                   'SW': (1, -1),
+                   'NE': (1, -1),
+                   'SW': (-1, 1),
                    'SE': (1, 1)}
         action_taken = False
         if self.has_action():

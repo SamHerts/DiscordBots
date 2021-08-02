@@ -20,3 +20,4 @@ BulletTank/utils/.env
 BulletTank/utils/__pycache__
 BulletTank/utils/__init__.py
 BulletTank/Cogs/__pycache__
+BulletTank/Game/__pycache__

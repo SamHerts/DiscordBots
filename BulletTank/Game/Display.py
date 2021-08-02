@@ -11,11 +11,13 @@ width = 10440
 height = 5220
 thickness = 10
 
-four_tank = Image.open(r'.\4HTank.png')
-three_tank = Image.open(r'.\3HTank.png')
-two_tank = Image.open(r'.\2HTank.png')
-one_tank = Image.open(r'.\1HTank.png')
-grid = Image.open(r'.\Board.png')
+four_tank = Image.open(r"BulletTank\Sprites\4HTank.png")
+three_tank = Image.open(r"BulletTank\Sprites\3HTank.png")
+two_tank = Image.open(r"BulletTank\Sprites\2HTank.png")
+one_tank = Image.open(r"BulletTank\Sprites\1HTank.png")
+grid = Image.open(r"BulletTank\Sprites\Board.png")
+
+tank_list = {1: one_tank, 2: two_tank, 3: three_tank, 4: four_tank}
 
 
 def change_color(image: Image.Image, color: list) -> Image.Image:
@@ -61,17 +63,19 @@ def draw_grid(grid_step, grid_height, grid_width, pixel_thickness):
     return image
 
 
-def place_tank(board, tank, coord, tank_color):
+def place_tank(board, health, coord, tank_color):
     """
     given coordinates relative to grid, place tank
     --need refactoring for different image sizes
     """
+    tank = tank_list.get(health)
+    new_board = board.copy()
     x1, y1 = coord
     coord = x1 * 522 + thickness, y1 * 522 + thickness
     if tank_color is not None:
         tank = change_color(tank, tank_color)
-    board.paste(tank, coord, tank.convert('RGBA'))
-    return board
+    new_board.paste(tank, coord, tank.convert('RGBA'))
+    return new_board
 
 
 def rainbow_tank(board: Image.Image) -> Image.Image:
@@ -81,13 +85,10 @@ def rainbow_tank(board: Image.Image) -> Image.Image:
     for x in range(0, 20):
         for y in range(0, 10):
             color = colors[(x + y) % 4]
-            board = place_tank(board, fullTank_img, (x, y), color)
+            board = place_tank(board, 4, (x, y), color)
     return board
 
 
 if __name__ == '__main__':
-    fullTank_img = Image.open(r'.\4HTank.png')
     Board = draw_grid(step, height, width, thickness)
-    Board.save(r'.\Board.png')
-    rainbow_board = rainbow_tank(Board)
-    rainbow_board.show()
+    Board.save(r"BulletTank\Sprites\Board.png")

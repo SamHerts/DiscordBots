@@ -21,7 +21,7 @@ Defeated Players are added to the Angel Box and vote to give out bonus Action Po
 A player must receive 30% of the vote to receive the Action Point
 """
 
-grid = Display.grid
+blank_grid = Display.grid
 number_of_players = 4
 players_list = []
 
@@ -37,22 +37,35 @@ def distribute_action_points(target, amount):
             x.action_points += amount
 
 
-def update_grid(old_grid):
+def update_grid():
+    new_grid = blank_grid.copy()
     for x in players_list:
-        old_grid = Display.place_tank(old_grid, Display.four_tank, player.coordinates, player.color)
+        new_grid = Display.place_tank(
+            new_grid, x.health, x.coordinates, x.color)
 
-    old_grid.show()
-    return old_grid
+    return new_grid
 
 
 if __name__ == '__main__':
     for player in range(number_of_players):
-        players_list.append(Player.Player(user_id=player, color=Display.colors[player]))
+        players_list.append(Player.Player(
+            user_id=player, color=Display.colors[player]))
 
     players_list[0].coordinates = [0, 0]
     players_list[1].coordinates = [19, 0]
     players_list[2].coordinates = [0, 9]
     players_list[3].coordinates = [19, 9]
 
-    grid = update_grid()
-    distribute_action_points("All")
+    curr_grid = update_grid()
+    curr_grid.show()
+    distribute_action_points("All", 1)
+    if players_list[0].move("S"):
+        print("Move Successful")
+    else:
+        print("Could not move")
+    curr_grid = update_grid()
+    curr_grid.show()
+    if players_list[0].move("S"):
+        print("Move Successful")
+    else:
+        print("Could not move")
