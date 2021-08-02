@@ -17,4 +17,4 @@ Rules:
 
 
 ![Alt text](BoardMockup.png?raw=true "Board Mockup")
-![Alt_text](Rainbow_tanks.png?raw=true "Rainbow!")
+![Alt_text](Sprites/Rainbow_tanks.png?raw=true "Rainbow!")
