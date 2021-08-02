@@ -16,5 +16,4 @@ Rules:
   * A player must receive 30% of the vote to receive the Action Point 
 
 
-![Alt text](BoardMockup.png?raw=true "Board Mockup")
 ![Alt_text](Sprites/Rainbow_tanks.png?raw=true "Rainbow!")
