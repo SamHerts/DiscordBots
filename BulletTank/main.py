@@ -7,7 +7,7 @@ BulletTankDescription = "Bullet Tank Discord Bot - By SamH."
 
 bot = commands.Bot(command_prefix='?',
                    case_insensitive=True,
-                   description=TweetyBirdDescription)
+                   description=BulletTankDescription)
 
 
 @bot.event
@@ -27,5 +27,5 @@ async def on_command_error(ctx, error):
     await ctx.send(error)
 
 if __name__ == "__main__":
-    bot.load_extension("Cogs.MainCog")    
+    bot.load_extension("Cogs.MainCog")
     bot.run(settings.Discord_Token)
