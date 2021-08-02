@@ -14,8 +14,8 @@ TweetyBird/utils/__init__.py
 TweetyBird/utils/__pycache__
 TweetyBird/Cogs/__pycache__
 
-BulletTank/BoardMockup.png
-BulletTank/Rainbow_tanks.png
+BulletTank/Sprites/BoardMockup.png
+BulletTank/Sprites/Rainbow_tanks.png
 BulletTank/utils/.env
 BulletTank/utils/__pycache__
 BulletTank/utils/__init__.py
