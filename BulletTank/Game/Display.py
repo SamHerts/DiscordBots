@@ -2,17 +2,26 @@ from PIL import Image, ImageDraw
 import numpy as np
 
 RED = [255, 0, 0]
-GREEN = [0, 255, 0]
+GREEN = [0, 90, 0]
 BLUE = [0, 0, 255]
-Colors = [RED, GREEN, BLUE, None]
+YELLOW = [220, 200, 0]
+colors = [RED, GREEN, BLUE, YELLOW, None]
 step = 20
 width = 10440
 height = 5220
 thickness = 10
 
+four_tank = Image.open(r'.\4HTank.png')
+three_tank = Image.open(r'.\3HTank.png')
+two_tank = Image.open(r'.\2HTank.png')
+one_tank = Image.open(r'.\1HTank.png')
+grid = Image.open(r'.\Board.png')
 
-# noinspection PyTypeChecker
+
 def change_color(image: Image.Image, color: list) -> Image.Image:
+    """
+    Adjust the color of a sprite from black to given color
+    """
     data = np.array(image.convert('RGBA'))
 
     red, green, blue = data[:, :, 0], data[:, :, 1], data[:, :, 2]
@@ -23,6 +32,9 @@ def change_color(image: Image.Image, color: list) -> Image.Image:
 
 
 def draw_grid(grid_step, grid_height, grid_width, pixel_thickness):
+    """
+    Draws a game board grid with alpha values - needs refactoring for different sizes and shapes
+    """
     image = Image.new(
         mode='RGBA',
         size=(grid_width + pixel_thickness, grid_height + pixel_thickness),
@@ -30,16 +42,14 @@ def draw_grid(grid_step, grid_height, grid_width, pixel_thickness):
     )
     draw = ImageDraw.Draw(image)
 
-    y_start = 0
+    x_start = y_start = 0
     y_end = image.height
-    step_size = int(image.width / step)
+    x_end = image.width
+    step_size = int(image.width / grid_step)
 
     for x in range(0, image.width, step_size):
         line = ((x + int(thickness / 2) - 1, y_start), (x + (thickness / 2) - 1, y_end))
         draw.line(line, fill=(0, 0, 0, 255), width=thickness)
-
-    x_start = 0
-    x_end = image.width
 
     for y in range(0, image.height, step_size):
         line = ((x_start, y + int(thickness / 2) - 1), (x_end, y + int(thickness / 2) - 1))
@@ -50,23 +60,29 @@ def draw_grid(grid_step, grid_height, grid_width, pixel_thickness):
 
 
 def place_tank(board, tank, coord, tank_color):
+    """
+    given coordinates relative to grid, place tank
+    --need refactoring for different image sizes
+    """
     x1, y1 = coord
     coord = x1 * 522 + thickness, y1 * 522 + thickness
     if tank_color is not None:
         tank = change_color(tank, tank_color)
-    board.paste(tank, coord, tank)
+    board.paste(tank, coord, tank.convert('RGBA'))
     return board
 
 
-def rainbow_tank(image):
+def rainbow_tank(board: Image.Image) -> Image.Image:
+    """
+    Fun function to create a rainbow patterned board
+    """
     for x in range(0, 20):
         for y in range(0, 10):
-            color = Colors[(x + y) % 4]
-            image = place_tank(image, fullTank_img, (x, y), color)
-    return image
+            color = colors[(x + y) % 4]
+            board = place_tank(board, fullTank_img, (x, y), color)
+    return board
 
 
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     fullTank_img = Image.open(r'.\4HTank.png')
     Board = draw_grid(step, height, width, thickness)
