@@ -27,14 +27,11 @@ players_list = []
 
 
 def distribute_action_points(target, amount):
-    if target is list:
-        for x in target:
-            x.action_points += amount
-    elif target is Player.Player:
-        target.action_points += amount
-    elif target == "All":
-        for x in players_list:
-            x.action_points += amount
+    print(f"Distributing {amount} to {target.user_id}")
+
+    target.action_points += amount
+
+    return target
 
 
 def update_grid():
@@ -58,14 +55,42 @@ if __name__ == '__main__':
 
     curr_grid = update_grid()
     curr_grid.show()
-    distribute_action_points("All", 1)
-    if players_list[0].move("S"):
-        print("Move Successful")
-    else:
-        print("Could not move")
+
+    players_list[0] = distribute_action_points(players_list[0], 10)
+    print(players_list[0].action_points)
+    for x in range(6):
+        if players_list[0].move("S"):
+            print("Move Successful")
+        else:
+            print("Could not move")
     curr_grid = update_grid()
     curr_grid.show()
-    if players_list[0].move("S"):
-        print("Move Successful")
+    if players_list[0].shoot(players_list[2]):
+        print("Shots fired! And a hit!!!")
     else:
-        print("Could not move")
+        print("Shots fired! And a miss! Oh no!")
+
+    curr_grid = update_grid()
+    curr_grid.show()
+
+    print(
+        f"{players_list[0].user_id} has {players_list[0].action_points} left")
+
+    if players_list[0].increase_range():
+        print("Range Increased!")
+    else:
+        print("not enough action points!")
+
+    if players_list[0].increase_range():
+        print("Range Increased!")
+    else:
+        print("not enough action points!")
+
+    if players_list[0].shoot(players_list[2]):
+        print("Shots fired! And a hit!!!")
+        players_list[2].take_damage(1)
+    else:
+        print("Shots fired! And a miss! Oh no!")
+
+    curr_grid = update_grid()
+    curr_grid.show()

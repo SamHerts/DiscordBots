@@ -45,7 +45,8 @@ class Player:
             elif self.coordinates[1] == self.y_end and (direction == 'E' or direction == 'SE' or direction == 'NE'):
                 pass
             else:
-                self.coordinates = [self.coordinates[0] + result[0], self.coordinates[1] + result[1]]
+                self.coordinates = [self.coordinates[0] +
+                                    result[0], self.coordinates[1] + result[1]]
                 self.use_action()
                 action_taken = True
         return action_taken
@@ -54,10 +55,15 @@ class Player:
         """
         Validate Action Points, and Target.
         """
-        if self.has_action() and check_range(self.coordinates, target, self.range):
+        print(f"Shooting! With a range of {self.range}")
+        if self.has_action() and check_range(self.coordinates, target.coordinates, self.range):
+            print(
+                f"{self.user_id} at location {self.coordinates} shot {target.user_id} at location {target.coordinates}!")
             self.use_action()
             return True
         else:
+            print(
+                f"{self.user_id} at location {self.coordinates} missed {target.user_id} at location {target.coordinates}!")
             return False
 
     def give_action(self, target):
@@ -66,6 +72,17 @@ class Player:
         """
         if self.has_action() and check_range(self.coordinates, target, self.range):
             self.use_action()
+            return True
+        else:
+            return False
+
+    def increase_range(self):
+        """
+        Validate Action points and increase range
+        """
+        if self.has_action():
+            self.use_action()
+            self.range += 1
             return True
         else:
             return False
@@ -86,7 +103,9 @@ def check_range(first_coordinates, second_coordinates, max_range):
     """
     Check if the first coordinates are within the distance of the second coordinates
     """
-    return dist(first_coordinates, second_coordinates) < max_range
+    print(
+        f"First Coords: {first_coordinates}\nSecond Coords: {second_coordinates}\nDistance: {dist(first_coordinates, second_coordinates)}")
+    return dist(first_coordinates, second_coordinates) <= max_range
 
 
 if __name__ == '__main__':
