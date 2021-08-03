@@ -6,7 +6,7 @@ class MainCog(commands.Cog, name="General"):
         self.bot = bot
 
     @commands.command(name='load', hidden=True)
-    @commands.is_owner()
+    @commands.has_role("Administrator")
     async def LoadCog(self, ctx, *, cog: str):
         """
         Command which Loads a Module.

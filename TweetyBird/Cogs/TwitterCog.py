@@ -9,7 +9,8 @@ FollowDescription = "Add a twitter account to the Subscription List"
 UnFollowDescription = "Remove a twitter account from the Subscription List"
 ListUsersDescription = "See what twitter accounts are being followed"
 LookUpDescription = "Retrieve the screen name of a twitter account"
-RecentTweetDescription = "Retrieve the most recent tweet from a twutter account"
+RecentTweetDescription = "Retrieve the most recent tweet from a twitter account"
+StartStreamDescription = "Starts the stream of tweets"
 
 
 class TwitIDConverter(commands.Converter):
@@ -73,6 +74,11 @@ class TwitterCog(commands.Cog, name="Twitter"):
         """
         print('Got RecentTweet Command')
         twitter_utils.get_recent_tweet_from_user(user)
+
+    @commands.command(description=StartStreamDescription)
+    async def start_stream(self, ctx):
+        print("Got LoadStream Command")
+        twitter_utils.load_stream()
 
 
 def setup(bot):
