@@ -24,6 +24,7 @@ A player must receive 30% of the vote to receive the Action Point
 blank_grid = Display.grid
 number_of_players = 4
 players_list = []
+game_running = False
 
 
 def distribute_action_points(target, amount):
@@ -41,6 +42,15 @@ def update_grid():
             new_grid, x.health, x.coordinates, x.color)
 
     return new_grid
+
+
+def add_user(player_name):
+    if not game_running and len(players_list) < number_of_players:
+        players_list.append(Player.Player(
+            user_id=player_name, color=Display.colors[len(players_list)]))
+        return True
+    else:
+        return False
 
 
 if __name__ == '__main__':

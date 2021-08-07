@@ -9,15 +9,14 @@
 # Local History for Visual Studio Code
 .history/
 
-TweetyBird/utils/.env
-TweetyBird/utils/__init__.py
-TweetyBird/utils/__pycache__
-TweetyBird/Cogs/__pycache__
-
 BulletTank/Sprites/BoardMockup.png
 BulletTank/Sprites/Rainbow_tanks.png
-BulletTank/utils/.env
-BulletTank/utils/__pycache__
-BulletTank/utils/__init__.py
-BulletTank/Cogs/__pycache__
-BulletTank/Game/__pycache__
+
+__pycache__
+*/__pycache__
+*/*/__pycache__
+.env
+*/.env
+*/*/.env
+
+
