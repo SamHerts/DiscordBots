@@ -122,6 +122,12 @@ def shoot_player(shooter, shootee):
         return False
 
 
+def increase_range(user_id):
+    for index, p in enumerate(players_list):
+        if p.user_id == user_id:
+            pass
+
+
 if __name__ == '__main__':
     for player in range(number_of_players):
         players_list.append(Player.Player(

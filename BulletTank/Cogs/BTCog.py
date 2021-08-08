@@ -94,6 +94,13 @@ class BTCog(commands.Cog, name="Bullet Tank Game"):
         Give an amount of action points to another player
         """
 
+    @commands.command()
+    async def IncreaseRange(self, ctx):
+        """
+        Increase the range of your tank -- up to a max of 3
+        """
+        if BT.check_if_playing(ctx.message.author):
+
     @commands.command(description=RulesDescription)
     async def Rules(self, ctx):
         """
@@ -124,11 +131,10 @@ class BTCog(commands.Cog, name="Bullet Tank Game"):
 
 def setup(bot):
     bot.add_cog(BTCog(bot))
-    print('BulletTank Cog Successfully Loaded')
+    print('BulletTank Cog Successfully **Loaded**')
 
 
 def teardown(bot):
-    # twitter_utils.kill_stream()
     print('BulletTank Cog Successfully Unloaded')
 
 
