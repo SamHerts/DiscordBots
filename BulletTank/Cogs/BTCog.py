@@ -100,6 +100,7 @@ class BTCog(commands.Cog, name="Bullet Tank Game"):
         Increase the range of your tank -- up to a max of 3
         """
         if BT.check_if_playing(ctx.message.author):
+            pass
 
     @commands.command(description=RulesDescription)
     async def Rules(self, ctx):
