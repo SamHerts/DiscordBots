@@ -1,5 +1,5 @@
 
-from discord import File
+from discord import File, Member
 from discord.ext import commands
 import Game.GameDriver as BT
 from utils.BTsettings import BT_Discord_Webhook
@@ -77,12 +77,18 @@ class BTCog(commands.Cog, name="Bullet Tank Game"):
         await ctx.send(msg)
 
     @commands.command(description=ShootDescription)
-    async def Shoot(self, ctx):
+    async def Shoot(self, ctx, target: Member):
         """
         Shoots a target if possible
         """
         if BT.check_if_playing(ctx.message.author):
-            pass
+            if BT.shoot_player(ctx.message.author, target):
+                msg = "Nice shot!"
+            else:
+                msg = "No shot, too bad"
+        else:
+            msg = "You're not even playing!"
+        await ctx.send(msg)
 
     @commands.command(description=GiveActionDescription)
     async def GiveActionPoint(self, ctx):

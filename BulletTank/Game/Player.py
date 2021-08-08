@@ -87,7 +87,7 @@ class Player:
         else:
             return False
 
-    def take_damage(self, amount):
+    def take_damage(self, amount=1):
         if self.health > 0:
             self.health = self.health - amount
 

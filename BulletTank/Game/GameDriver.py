@@ -110,7 +110,16 @@ def get_ac_points(user_id):
 
 
 def shoot_player(shooter, shootee):
-    pass
+    for index, p in enumerate(players_list):
+        if p.user_id == shooter:
+            friend = index
+        if p.user_id == shootee:
+            enemy = index
+    if players_list[friend].shoot(players_list[enemy]):
+        players_list[enemy].take_damage()
+        return True
+    else:
+        return False
 
 
 if __name__ == '__main__':
