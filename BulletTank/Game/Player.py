@@ -1,4 +1,4 @@
-from math import dist
+from math import dist, floor
 
 
 class Player:
@@ -105,7 +105,7 @@ def check_range(first_coordinates, second_coordinates, max_range):
     """
     print(
         f"First Coords: {first_coordinates}\nSecond Coords: {second_coordinates}\nDistance: {dist(first_coordinates, second_coordinates)}")
-    return dist(first_coordinates, second_coordinates) <= max_range
+    return floor(dist(first_coordinates, second_coordinates)) <= max_range
 
 
 if __name__ == '__main__':

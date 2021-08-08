@@ -14,8 +14,6 @@ RulesDescription = "List the rules of the game"
 ShowBoardDescription = "Displays the current board state"
 
 rules = """
-    Driver needs to take input and follow logic rules
-
     Rules:
 
     Last Player standing wins.
