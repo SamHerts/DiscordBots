@@ -48,3 +48,7 @@ class MainCog(commands.Cog, name="General"):
 
 def setup(bot):
     bot.add_cog(MainCog(bot))
+
+
+if __name__ == '__main__':
+    print("This is a Discord Cog, no need to run this as main.")

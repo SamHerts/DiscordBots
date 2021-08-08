@@ -130,3 +130,7 @@ def setup(bot):
 def teardown(bot):
     # twitter_utils.kill_stream()
     print('BulletTank Cog Successfully Unloaded')
+
+
+if __name__ == '__main__':
+    print("This is a Discord Cog, no need to run this as main.")

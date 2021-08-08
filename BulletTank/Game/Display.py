@@ -90,5 +90,4 @@ def rainbow_tank(board: Image.Image) -> Image.Image:
 
 
 if __name__ == '__main__':
-    Board = draw_grid(step, height, width, thickness)
-    Board.save(r"BulletTank\Sprites\Board.png")
+    print("This is a Display class, no need to run this as main.")
