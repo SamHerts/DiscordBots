@@ -5,13 +5,13 @@ class Player:
     user_id = 0
     health = 4
     color = (0, 0, 0)
-    action_points = 0
+    action_points = 3
     range = 1
     coordinates = [0, 0]
     x_start = 0
     y_start = 0
     x_end = 19
-    y_end = 19
+    y_end = 9
 
     def __init__(self, user_id, color, coordinates=None):
         if coordinates is None:
@@ -36,13 +36,13 @@ class Player:
         action_taken = False
         if self.has_action():
             result = choices.get(direction, 'default')
-            if self.coordinates[0] == self.x_start and (direction == 'N' or direction == 'NW' or direction == 'NE'):
+            if self.coordinates[0] == self.x_start and (direction == 'W' or direction == 'NW' or direction == 'SW'):
                 pass
-            elif self.coordinates[0] == self.x_end and (direction == 'S' or direction == 'SW' or direction == 'SE'):
+            elif self.coordinates[0] == self.x_end and (direction == 'E' or direction == 'NE' or direction == 'SE'):
                 pass
-            elif self.coordinates[1] == self.y_start and (direction == 'W' or direction == 'SW' or direction == 'NW'):
+            elif self.coordinates[1] == self.y_start and (direction == 'N' or direction == 'NW' or direction == 'NE'):
                 pass
-            elif self.coordinates[1] == self.y_end and (direction == 'E' or direction == 'SE' or direction == 'NE'):
+            elif self.coordinates[1] == self.y_end and (direction == 'S' or direction == 'SE' or direction == 'SW'):
                 pass
             else:
                 self.coordinates = [self.coordinates[0] +

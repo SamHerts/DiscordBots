@@ -1,6 +1,6 @@
 from discord.ext import commands
 
-from utils import settings
+from utils.BTsettings import Discord_Token
 
 # Discord Bot Setup
 BulletTankDescription = "Bullet Tank Discord Bot - By SamH."
@@ -28,4 +28,4 @@ async def on_command_error(ctx, error):
 
 if __name__ == "__main__":
     bot.load_extension("Cogs.MainCog")
-    bot.run(settings.Discord_Token)
+    bot.run(Discord_Token)

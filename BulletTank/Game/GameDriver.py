@@ -1,6 +1,8 @@
-import Player
-import Display
+from discord.ext.commands.core import check
+from . import Player
+from . import Display
 from PIL import Image, ImageDraw
+import numpy as np
 
 """
 Driver needs to take input and follow logic rules
@@ -25,6 +27,7 @@ blank_grid = Display.grid
 number_of_players = 4
 players_list = []
 game_running = False
+curr_grid = blank_grid
 
 
 def distribute_action_points(target, amount):
@@ -44,13 +47,70 @@ def update_grid():
     return new_grid
 
 
+def generate_coordinates():
+    x = np.random.randint(0, 19)
+    y = np.random.randint(0, 9)
+    return x, y
+
+
+def check_valid_coords(coordinates):
+    if len(players_list):
+        for p in players_list:
+            if coordinates == p.coordinates:
+                return False
+    return True
+
+
+def get_valid_random_coordinates():
+    while True:
+        try:
+            coords = generate_coordinates()
+        except:
+            continue
+
+        if not check_valid_coords(coords):
+            continue
+        else:
+            break
+    return coords
+
+
+def check_if_playing(player):
+    for p in players_list:
+        if player == p.user_id:
+            return True
+    return False
+
+
 def add_user(player_name):
-    if not game_running and len(players_list) < number_of_players:
+    if not game_running and len(players_list) < number_of_players and not check_if_playing(player_name):
+
         players_list.append(Player.Player(
-            user_id=player_name, color=Display.colors[len(players_list)]))
+            user_id=player_name, color=Display.colors[len(players_list)], coordinates=get_valid_random_coordinates()))
         return True
     else:
         return False
+
+
+def move_player(user_id, dir):
+    for p in players_list:
+        if p.user_id == user_id:
+            return p.move(dir)
+
+
+def admin_administer_points():
+    for p in players_list:
+        distribute_action_points(p, 1)
+
+
+def get_ac_points(user_id):
+    for p in players_list:
+        if user_id == p.user_id:
+            return p.action_points
+
+
+def shoot_player(shooter, shootee):
+    pass
 
 
 if __name__ == '__main__':
