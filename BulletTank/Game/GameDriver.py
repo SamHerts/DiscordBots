@@ -1,7 +1,7 @@
 from discord.ext.commands.core import check
 from . import Player
 from . import Display
-from PIL import Image, ImageDraw
+# from PIL import Image, ImageDraw
 import numpy as np
 
 """
@@ -35,7 +35,7 @@ def distribute_action_points(target, amount):
 
     target.action_points += amount
 
-    return target
+    return True
 
 
 def update_grid():
@@ -93,14 +93,18 @@ def add_user(player_name):
 
 
 def move_player(user_id, dir):
-    for p in players_list:
-        if p.user_id == user_id:
-            return p.move(dir)
+    friend = get_index(user_id)
+    return players_list[friend].move(dir)
 
 
 def admin_administer_points():
     for p in players_list:
         distribute_action_points(p, 1)
+
+
+def send_ac_point(source, target):
+    friend, enemy = get_index(source, target)
+    return players_list[friend].give_action(players_list[enemy]) and distribute_action_points(players_list[enemy], 1)
 
 
 def get_ac_points(user_id):
@@ -109,73 +113,30 @@ def get_ac_points(user_id):
             return p.action_points
 
 
-def shoot_player(shooter, shootee):
-    for index, p in enumerate(players_list):
-        if p.user_id == shooter:
-            friend = index
-        if p.user_id == shootee:
-            enemy = index
-    if players_list[friend].shoot(players_list[enemy]):
-        players_list[enemy].take_damage()
-        return True
-    else:
-        return False
+def shoot_player(source, target):
+    friend, enemy = get_index(source, target)
+    return players_list[friend].shoot(players_list[enemy]) and players_list[enemy].take_damage()
 
 
 def increase_range(user_id):
-    for index, p in enumerate(players_list):
-        if p.user_id == user_id:
-            pass
+    index = get_index(user_id)
+    return players_list[index].increase_range()
+
+
+def get_index(source, target=None):
+    if target is not None:
+        for index, p in enumerate(players_list):
+            if p.user_id == source:
+                friend = index
+            if p.user_id == target:
+                enemy = index
+        return friend, enemy
+    else:
+        for index, p in enumerate(players_list):
+            if p.user_id == source:
+                friend = index
+        return friend
 
 
 if __name__ == '__main__':
-    for player in range(number_of_players):
-        players_list.append(Player.Player(
-            user_id=player, color=Display.colors[player]))
-
-    players_list[0].coordinates = [0, 0]
-    players_list[1].coordinates = [19, 0]
-    players_list[2].coordinates = [0, 9]
-    players_list[3].coordinates = [19, 9]
-
-    curr_grid = update_grid()
-    curr_grid.show()
-
-    players_list[0] = distribute_action_points(players_list[0], 10)
-    print(players_list[0].action_points)
-    for x in range(6):
-        if players_list[0].move("S"):
-            print("Move Successful")
-        else:
-            print("Could not move")
-    curr_grid = update_grid()
-    curr_grid.show()
-    if players_list[0].shoot(players_list[2]):
-        print("Shots fired! And a hit!!!")
-    else:
-        print("Shots fired! And a miss! Oh no!")
-
-    curr_grid = update_grid()
-    curr_grid.show()
-
-    print(
-        f"{players_list[0].user_id} has {players_list[0].action_points} left")
-
-    if players_list[0].increase_range():
-        print("Range Increased!")
-    else:
-        print("not enough action points!")
-
-    if players_list[0].increase_range():
-        print("Range Increased!")
-    else:
-        print("not enough action points!")
-
-    if players_list[0].shoot(players_list[2]):
-        print("Shots fired! And a hit!!!")
-        players_list[2].take_damage(1)
-    else:
-        print("Shots fired! And a miss! Oh no!")
-
-    curr_grid = update_grid()
-    curr_grid.show()
+    print("This is the GameDriver class, no need to run this as main.")

@@ -36,17 +36,12 @@ class Player:
         action_taken = False
         if self.has_action():
             result = choices.get(direction, 'default')
-            if self.coordinates[0] == self.x_start and (direction == 'W' or direction == 'NW' or direction == 'SW'):
-                pass
-            elif self.coordinates[0] == self.x_end and (direction == 'E' or direction == 'NE' or direction == 'SE'):
-                pass
-            elif self.coordinates[1] == self.y_start and (direction == 'N' or direction == 'NW' or direction == 'NE'):
-                pass
-            elif self.coordinates[1] == self.y_end and (direction == 'S' or direction == 'SE' or direction == 'SW'):
+            tmp_coordinates = [self.coordinates[0] +
+                               result[0], self.coordinates[1] + result[1]]
+            if (self.x_start < tmp_coordinates[0] < self.x_end) or (self.y_start < tmp_coordinates[1] < self.y_end):
                 pass
             else:
-                self.coordinates = [self.coordinates[0] +
-                                    result[0], self.coordinates[1] + result[1]]
+                self.coordinates = tmp_coordinates
                 self.use_action()
                 action_taken = True
         return action_taken

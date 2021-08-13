@@ -89,10 +89,18 @@ class BTCog(commands.Cog, name="Bullet Tank Game"):
         await ctx.send(msg)
 
     @commands.command(description=GiveActionDescription)
-    async def GiveActionPoint(self, ctx):
+    async def GiveActionPoint(self, ctx, target: Member):
         """
         Give an amount of action points to another player
         """
+        if BT.check_if_playing(ctx.message.author):
+            if BT.send_ac_point(ctx.message.author, target):
+                msg = "You've given one of your action points to someone else!"
+            else:
+                msg = "You can't give them an action point."
+        else:
+            msg = "You're not even playing!"
+        await ctx.send(msg)
 
     @commands.command()
     async def IncreaseRange(self, ctx):
@@ -100,7 +108,13 @@ class BTCog(commands.Cog, name="Bullet Tank Game"):
         Increase the range of your tank -- up to a max of 3
         """
         if BT.check_if_playing(ctx.message.author):
-            pass
+            if BT.increase_range(ctx.message.author):
+                msg = "You've increased your range!"
+            else:
+                msg = "Cannot increase range."
+        else:
+            msg = "You're not even playing!"
+        await ctx.send(msg)
 
     @commands.command(description=RulesDescription)
     async def Rules(self, ctx):
