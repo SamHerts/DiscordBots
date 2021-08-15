@@ -5,8 +5,6 @@ from . import Display
 import numpy as np
 
 """
-Driver needs to take input and follow logic rules
-
 Rules:
 
 Last Player standing wins.

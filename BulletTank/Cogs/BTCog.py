@@ -143,6 +143,15 @@ class BTCog(commands.Cog, name="Bullet Tank Game"):
         BT.admin_administer_points()
         await ctx.send("Everyone has received an action point!")
 
+    @commands.command(hidden=True)
+    @commands.has_role("Administrator")
+    async def NewGame(self, ctx, number_of_players, grid_length, grid_height):
+        """
+        Admin only: start a new game
+        """
+
+        await ctx.send("@everyone! Starting a new game! Join now or never.")
+
 
 def setup(bot):
     bot.add_cog(BTCog(bot))
