@@ -92,7 +92,8 @@ def add_user(player_name):
 
 def move_player(user_id, dir):
     friend = get_index(user_id)
-    return players_list[friend].move(dir)
+    all_coords = get_all_coords(players_list)
+    return players_list[friend].move(dir, all_coords)
 
 
 def admin_administer_points():
@@ -134,6 +135,13 @@ def get_index(source, target=None):
             if p.user_id == source:
                 friend = index
         return friend
+
+
+def get_all_coords(myList):
+    coords_list = []
+    for p in myList:
+        coords_list.append(p.coordinates)
+    return coords_list
 
 
 if __name__ == '__main__':

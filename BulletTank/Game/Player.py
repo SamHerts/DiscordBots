@@ -20,7 +20,7 @@ class Player:
         self.color = color
         self.coordinates = coordinates
 
-    def move(self, direction) -> bool:
+    def move(self, direction, other_coords) -> bool:
         """
         Validate Direction, Action Points, and occupied, then move that direction.
         Directions are Cardinal - N,S,E,W and the four diagonals -NW, NE, SW, SE
@@ -39,6 +39,8 @@ class Player:
             tmp_coordinates = [self.coordinates[0] +
                                result[0], self.coordinates[1] + result[1]]
             if (self.x_start < tmp_coordinates[0] < self.x_end) or (self.y_start < tmp_coordinates[1] < self.y_end):
+                pass
+            elif tmp_coordinates in other_coords:
                 pass
             else:
                 self.coordinates = tmp_coordinates
