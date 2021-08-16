@@ -1,3 +1,4 @@
+from discord import player
 from discord.ext.commands.core import check
 from . import Player
 from . import Display
@@ -113,7 +114,11 @@ def get_ac_points(user_id):
 
 def shoot_player(source, target):
     friend, enemy = get_index(source, target)
-    return players_list[friend].shoot(players_list[enemy]) and players_list[enemy].take_damage()
+    if players_list[friend].shoot(players_list[enemy]):
+        if players_list[enemy].take_damage():
+            return True
+        else:
+            del players_list[enemy]
 
 
 def increase_range(user_id):

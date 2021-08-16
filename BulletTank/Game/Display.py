@@ -2,9 +2,7 @@ from PIL import Image, ImageDraw
 import numpy as np
 
 
-colors = {'BLACK': [0, 0, 0],
-          'GRAY': [128, 128, 128],
-          'WHITE': [255, 255, 255],
+colors = {'WHITE': [255, 255, 255],
           'RED': [255, 0, 0],
           'PURPLE': [255, 0, 255],
           'GREEN': [0, 128, 0],

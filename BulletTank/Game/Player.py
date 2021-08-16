@@ -60,6 +60,7 @@ class Player:
             print(
                 f"{self.user_id} at location {self.coordinates} shot {target.user_id} at location {target.coordinates}!")
             self.use_action()
+            self.range = 1
             return True
         else:
             print(
@@ -80,7 +81,7 @@ class Player:
         """
         Validate Action points and increase range
         """
-        if self.has_action():
+        if self.has_action() and self.range < 3:
             self.use_action()
             self.range += 1
             return True
@@ -90,6 +91,9 @@ class Player:
     def take_damage(self, amount=1):
         if self.health > 0:
             self.health = self.health - amount
+            return True
+        else:
+            return False
 
     def has_action(self):
         return self.action_points

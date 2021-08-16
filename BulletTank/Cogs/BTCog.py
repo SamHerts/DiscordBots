@@ -80,8 +80,8 @@ class BTCog(commands.Cog, name="Bullet Tank Game"):
         Shoots a target if possible
         """
         if BT.check_if_playing(ctx.message.author.mention):
-            if BT.shoot_player(ctx.message.author.mention, target):
-                msg = "Nice shot!"
+            if BT.shoot_player(ctx.message.author.mention, target.mention):
+                msg = "Nice shot! Your Range has been reset to 1"
             else:
                 msg = "No shot, too bad"
         else:
@@ -94,7 +94,7 @@ class BTCog(commands.Cog, name="Bullet Tank Game"):
         Give an amount of action points to another player
         """
         if BT.check_if_playing(ctx.message.author.mention):
-            if BT.send_ac_point(ctx.message.author.mention, target):
+            if BT.send_ac_point(ctx.message.author.mention, target.mention):
                 msg = "You've given one of your action points to someone else!"
             else:
                 msg = "You can't give them an action point."
