@@ -1,11 +1,17 @@
 from PIL import Image, ImageDraw
 import numpy as np
 
-RED = [255, 0, 0]
-GREEN = [0, 90, 0]
-BLUE = [0, 0, 255]
-YELLOW = [220, 200, 0]
-colors = [RED, GREEN, BLUE, YELLOW, None]
+
+colors = {'BLACK': [0, 0, 0],
+          'GRAY': [128, 128, 128],
+          'WHITE': [255, 255, 255],
+          'RED': [255, 0, 0],
+          'PURPLE': [255, 0, 255],
+          'GREEN': [0, 128, 0],
+          'OLIVE': [128, 128, 0],
+          'YELLOW': [250, 250, 0],
+          'BLUE': [0, 0, 255],
+          'AQUA': [0, 255, 255]}
 step = 20
 width = 10440
 height = 5220

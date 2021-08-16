@@ -20,6 +20,9 @@ class Player:
         self.color = color
         self.coordinates = coordinates
 
+    def __str__(self) -> str:
+        return "{0}, your coordinates are {1}, and your color is {2}".format(self.user_id, self.coordinates, self.color)
+
     def move(self, direction, other_coords) -> bool:
         """
         Validate Direction, Action Points, and occupied, then move that direction.

@@ -41,7 +41,7 @@ class BTCog(commands.Cog, name="Bullet Tank Game"):
         Adds the author to the game -- only if a game isn't currently in progress
         """
         msg = None
-        if BT.add_user(ctx.message.author):
+        if BT.add_user(ctx.message.author.mention):
             msg = f'Adding you to the game, {ctx.message.author}'
         else:
             msg = f'Cannot add you to the game, either you are already in the game, there are too many players, or the game has already begun.'
@@ -150,7 +150,7 @@ class BTCog(commands.Cog, name="Bullet Tank Game"):
         Admin only: start a new game
         """
         async with ctx.typing():
-            msg = BT.start_game()
+            msg = str(BT.start_game())
             await ctx.send("A new game has begun! It is too late to join.\nGood Luck to all.")
             await ctx.send(msg)
 

@@ -40,7 +40,7 @@ def update_grid():
     new_grid = blank_grid.copy()
     for x in players_list:
         new_grid = Display.place_tank(
-            new_grid, x.health, x.coordinates, x.color)
+            new_grid, x.health, x.coordinates, Display.colors[x.color])
 
     return new_grid
 
@@ -84,7 +84,7 @@ def add_user(player_name):
     if not game_running and len(players_list) < number_of_players and not check_if_playing(player_name):
 
         players_list.append(Player.Player(
-            user_id=player_name, color=Display.colors[len(players_list)], coordinates=get_valid_random_coordinates()))
+            user_id=player_name, color=list(Display.colors)[len(players_list)], coordinates=get_valid_random_coordinates()))
         return True
     else:
         return False
@@ -146,7 +146,7 @@ def get_all_coords(myList):
 
 def start_game():
     game_running = True
-    return [f"{elem.user_id}" % elem for elem in players_list]
+    return "\n".join(str(i) for i in players_list)
 
 
 if __name__ == '__main__':
