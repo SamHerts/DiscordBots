@@ -144,5 +144,10 @@ def get_all_coords(myList):
     return coords_list
 
 
+def start_game():
+    game_running = True
+    return [f"{elem.user_id}" % elem for elem in players_list]
+
+
 if __name__ == '__main__':
     print("This is the GameDriver class, no need to run this as main.")

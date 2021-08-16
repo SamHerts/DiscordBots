@@ -149,8 +149,10 @@ class BTCog(commands.Cog, name="Bullet Tank Game"):
         """
         Admin only: start a new game
         """
-
-        await ctx.send("@everyone! Starting a new game! Join now or never.")
+        async with ctx.typing():
+            msg = BT.start_game()
+            await ctx.send("A new game has begun! It is too late to join.\nGood Luck to all.")
+            await ctx.send(msg)
 
 
 def setup(bot):
