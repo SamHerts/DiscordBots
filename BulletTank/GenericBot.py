@@ -120,7 +120,7 @@ async def load(ctx, cog=None):
         # load the specific cog
         async with ctx.typing():
             embed = discord.Embed(
-                title=f"loading {cog}!",
+                title=f"Loading {cog}!",
                 color=0x808080,
                 timestamp=ctx.message.created_at
             )
@@ -128,7 +128,7 @@ async def load(ctx, cog=None):
             if not os.path.exists(f"./Cogs/{ext}".strip()):
                 # if the file does not exist
                 embed.add_field(
-                    name=f"Failed to reload: `{ext}`",
+                    name=f"Failed to Load: `{ext}`",
                     value="This cog does not exist.",
                     inline=False
                 )
@@ -185,7 +185,7 @@ async def unload(ctx, cog=None):
         # load the specific cog
         async with ctx.typing():
             embed = discord.Embed(
-                title=f"loading {cog}!",
+                title=f"Unloading {cog}!",
                 color=0x808080,
                 timestamp=ctx.message.created_at
             )

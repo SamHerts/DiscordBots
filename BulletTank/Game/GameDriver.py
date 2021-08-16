@@ -161,7 +161,7 @@ def start_game(grid_length, grid_height):
     # number_of_players = num_players
     grid_size = [grid_length, grid_height]
     print("Drawing Grid")
-    blank_grid = Display.draw_grid(step=grid_length, grid_width=10440,
+    blank_grid = Display.draw_grid(grid_step=grid_length, grid_width=10440,
                                    grid_height=5220, pixel_thickness=10)
     print("Grid finished drawing! Sending list of players")
 

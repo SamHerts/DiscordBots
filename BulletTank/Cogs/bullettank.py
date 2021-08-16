@@ -152,7 +152,7 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
 
     @commands.command(hidden=True)
     @commands.has_role("Administrator")
-    async def NewGame(self, ctx, grid_length, grid_height):
+    async def NewGame(self, ctx, grid_length: int, grid_height: int):
         """
         Admin only: start a new game
         """
@@ -177,6 +177,7 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
         if isinstance(error, commands.MissingRequiredArgument):
             if error.param.name == 'grid_length' or error.param.name == 'grid_height':
                 await ctx.send("You forgot to give me a grid size!\nTry NewGame 20 10")
+        raise error
 
 
 def setup(bot):
