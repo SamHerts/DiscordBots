@@ -31,7 +31,7 @@ rules = """
     """
 
 
-class BTCog(commands.Cog, name="Bullet Tank Game"):
+class bullettank(commands.Cog, name="Bullet Tank Game"):
     def __init__(self, bot):
         self.bot = bot
 
@@ -180,7 +180,7 @@ class BTCog(commands.Cog, name="Bullet Tank Game"):
 
 
 def setup(bot):
-    bot.add_cog(BTCog(bot))
+    bot.add_cog(bullettank(bot))
 
 
 def teardown(bot):

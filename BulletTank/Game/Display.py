@@ -1,5 +1,6 @@
 from PIL import Image, ImageDraw
 import numpy as np
+import os
 
 
 colors = {'WHITE': [255, 255, 255],
@@ -15,11 +16,11 @@ width = 10440
 height = 5220
 thickness = 10
 
-four_tank = Image.open(r"BulletTank\Sprites\4HTank.png")
-three_tank = Image.open(r"BulletTank\Sprites\3HTank.png")
-two_tank = Image.open(r"BulletTank\Sprites\2HTank.png")
-one_tank = Image.open(r"BulletTank\Sprites\1HTank.png")
-grid = Image.open(r"BulletTank\Sprites\Board.png")
+four_tank = Image.open(os.getcwd()+'\Sprites\\4HTank.png')
+three_tank = Image.open(os.getcwd()+'\Sprites\\3HTank.png')
+two_tank = Image.open(os.getcwd()+'\Sprites\\2HTank.png')
+one_tank = Image.open(os.getcwd()+'\Sprites\\1HTank.png')
+grid = Image.open(os.getcwd()+'\Sprites\Board.png')
 
 tank_list = {1: one_tank, 2: two_tank, 3: three_tank, 4: four_tank}
 
