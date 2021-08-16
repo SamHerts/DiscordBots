@@ -1,5 +1,5 @@
 
-from discord import File, Member
+import discord
 from discord.ext import commands
 import Game.GameDriver as BT
 from utils.BTsettings import BT_Discord_Webhook
@@ -34,6 +34,10 @@ rules = """
 class BTCog(commands.Cog, name="Bullet Tank Game"):
     def __init__(self, bot):
         self.bot = bot
+
+    @commands.Cog.listener()
+    async def on_ready(self):
+        print("BTCog has been loaded")
 
     @commands.command(description=JoinGameDescription)
     async def JoinGame(self, ctx):
@@ -75,7 +79,7 @@ class BTCog(commands.Cog, name="Bullet Tank Game"):
         await ctx.send(msg)
 
     @commands.command(description=ShootDescription, enabled=False)
-    async def Shoot(self, ctx, target: Member):
+    async def Shoot(self, ctx, target: discord.Member):
         """
         Shoots a target if possible
         """
@@ -89,7 +93,7 @@ class BTCog(commands.Cog, name="Bullet Tank Game"):
         await ctx.send(msg)
 
     @commands.command(description=GiveActionDescription, enabled=False)
-    async def GiveActionPoint(self, ctx, target: Member):
+    async def GiveActionPoint(self, ctx, target: discord.Member):
         """
         Give an amount of action points to another player
         """
@@ -132,7 +136,10 @@ class BTCog(commands.Cog, name="Bullet Tank Game"):
             with BytesIO() as image_binary:
                 BT.update_grid().save(image_binary, 'PNG')
                 image_binary.seek(0)
-                await ctx.send(file=File(fp=image_binary, filename='Board.png'))
+                embed = discord.Embed(title=f'{self.bot.user.name} Map', description='\uFEFF',
+                                      colour=ctx.author.colour, timestamp=ctx.message.created_at)
+                image = discord.File(fp=image_binary, filename='Board.png')
+                await ctx.send(embed=embed, file=image)
 
     @commands.command(name="RP", hidden=True)
     @commands.has_role("Administrator")
@@ -174,7 +181,6 @@ class BTCog(commands.Cog, name="Bullet Tank Game"):
 
 def setup(bot):
     bot.add_cog(BTCog(bot))
-    print('BulletTank Cog Successfully **Loaded**')
 
 
 def teardown(bot):

@@ -41,13 +41,14 @@ def draw_grid(grid_step, grid_height, grid_width, pixel_thickness):
     """
     Draws a game board grid with alpha values - needs refactoring for different sizes and shapes
     """
+    print("Starting to draw a new image")
     image = Image.new(
         mode='RGBA',
         size=(grid_width + pixel_thickness, grid_height + pixel_thickness),
         color=(255, 255, 255, 5)
     )
     draw = ImageDraw.Draw(image)
-
+    print("Finished drawing blank image")
     x_start = y_start = 0
     y_end = image.height
     x_end = image.width

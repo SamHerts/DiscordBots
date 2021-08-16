@@ -22,6 +22,7 @@ async def on_ready():
     print(bot.user.name)
     print(bot.user.id)
     print('------')
+    await bot.change_presence(activity=discord.Game(name=f"Ready to start a new Game!"))
 
 
 @bot.event
@@ -77,6 +78,48 @@ async def on_command_error(ctx, error):
         traceback.print_exception(
             type(error), error, error.__traceback__, file=sys.stderr)
 
+
+@commands.command(name='load', hidden=True)
+@commands.is_owner()
+async def LoadCog(ctx, *, cog: str):
+    """
+    Command which Loads a Module.
+    """
+    try:
+        bot.load_extension(f'Cogs.{cog}')
+    except Exception as e:
+        await ctx.send(f'**`ERROR:`** {type(e).__name__} - {e}')
+    else:
+        await ctx.send('**`SUCCESS`**')
+
+
+@commands.command(name='unload', hidden=True)
+@commands.is_owner()
+async def UnloadCog(ctx, *, cog: str):
+    """
+    Command which Unloads a Module.
+    """
+    try:
+        bot.unload_extension(f'Cogs.{cog}')
+    except Exception as e:
+        await ctx.send(f'**`ERROR:`** {type(e).__name__} - {e}')
+    else:
+        await ctx.send('**`SUCCESS`**')
+
+
+@commands.command(name='reload', hidden=True)
+@commands.has_role("Administrator")
+async def ReloadCog(ctx, *, cog: str):
+    """
+    Command which Reloads a Module.
+    """
+    try:
+        bot.unload_extension(f'Cogs.{cog}')
+        bot.load_extension(f'Cogs.{cog}')
+    except Exception as e:
+        await ctx.send(f'**`ERROR:`** {type(e).__name__} - {e}')
+    else:
+        await ctx.send('**`SUCCESS`**')
+
 if __name__ == "__main__":
-    bot.load_extension("Cogs.MainCog")
     bot.run(Discord_Token)
