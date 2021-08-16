@@ -159,7 +159,10 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
         for command in self.get_commands():
             if command.name == "ShowBoard" or command.name == "IncreaseRange" or command.name == "GiveActionPoints" or command.name == "Shoot" or command.name == "Move" or command.name == "GetActionPoints" or command.name == "JoinGame"or command.name == "NewGame":
                 command.enabled = not command.enabled
-                print(f"Disabling {command.name}")
+                if command.enabled:
+                    print(f"Enabling {command.name}")
+                else:
+                    print(f"Disabling {command.name}")
 
         async with ctx.typing():
             msg = str(BT.start_game(grid_length, grid_height))

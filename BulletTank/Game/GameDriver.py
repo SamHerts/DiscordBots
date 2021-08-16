@@ -1,4 +1,5 @@
 # from discord import player
+from discord import user
 from discord.ext.commands.core import check
 from . import Player
 from . import Display
@@ -48,8 +49,8 @@ def update_grid():
 
 
 def generate_coordinates():
-    x = np.random.randint(0, 19)
-    y = np.random.randint(0, 9)
+    x = np.random.randint(0, grid_size[0]-1)
+    y = np.random.randint(0, grid_size[1]-1)
     return x, y
 
 
@@ -95,7 +96,7 @@ def add_user(player_name):
 
 def move_player(user_id, dir):
     friend = get_index(user_id)
-    return players_list[friend].move(dir, get_all_coords())
+    return players_list[friend].move(dir, get_all_coords(), grid_size)
 
 
 def admin_administer_points(amount):
@@ -109,9 +110,8 @@ def send_ac_point(source, target):
 
 
 def get_ac_points(user_id):
-    for p in players_list:
-        if user_id == p.user_id:
-            return p.action_points
+    friend = get_index(user_id)
+    return players_list[friend].action_points
 
 
 def shoot_player(source, target):
@@ -160,10 +160,10 @@ def start_game(grid_length, grid_height):
     game_running = True
     # number_of_players = num_players
     grid_size = [grid_length, grid_height]
-    print("Drawing Grid")
-    blank_grid = Display.draw_grid(grid_step=grid_length, grid_width=10440,
-                                   grid_height=5220, pixel_thickness=10)
-    print("Grid finished drawing! Sending list of players")
+    grid_pixel_length = 522*grid_length
+    grid_pixel_height = 522*grid_height
+    blank_grid = Display.draw_grid(grid_step=grid_length, grid_width=grid_pixel_length,
+                                   grid_height=grid_pixel_height, pixel_thickness=10)
 
     return "\n".join(str(i) for i in players_list)
 

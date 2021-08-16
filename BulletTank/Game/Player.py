@@ -8,10 +8,6 @@ class Player:
     action_points = 3
     range = 1
     coordinates = [0, 0]
-    x_start = 0
-    y_start = 0
-    x_end = 19
-    y_end = 9
 
     def __init__(self, user_id, color, coordinates=None):
         if coordinates is None:
@@ -23,7 +19,7 @@ class Player:
     def __str__(self) -> str:
         return "{0}, your coordinates are {1}, and your color is {2}".format(self.user_id, self.coordinates, self.color)
 
-    def move(self, direction, other_coords) -> bool:
+    def move(self, direction, other_coords, max_size: list) -> bool:
         """
         Validate Direction, Action Points, and occupied, then move that direction.
         Directions are Cardinal - N,S,E,W and the four diagonals -NW, NE, SW, SE
@@ -42,7 +38,7 @@ class Player:
             result = choices.get(direction, 'default')
             tmp_coordinates = [self.coordinates[0] +
                                result[0], self.coordinates[1] + result[1]]
-            if not (self.x_start <= tmp_coordinates[0] <= self.x_end) or not (self.y_start <= tmp_coordinates[1] <= self.y_end):
+            if not (0 <= tmp_coordinates[0] < max_size[0]) or not (0 <= tmp_coordinates[1] < max_size[1]):
                 print(f"outside of map: {tmp_coordinates=}")
                 pass
             elif tmp_coordinates in other_coords:
@@ -114,7 +110,3 @@ def check_range(first_coordinates, second_coordinates, max_range):
     print(
         f"First Coords: {first_coordinates}\nSecond Coords: {second_coordinates}\nDistance: {dist(first_coordinates, second_coordinates)}")
     return floor(dist(first_coordinates, second_coordinates)) <= max_range
-
-
-if __name__ == '__main__':
-    print("This is a Player class, no need to run this as main.")

@@ -46,7 +46,7 @@ def draw_grid(grid_step, grid_height, grid_width, pixel_thickness):
     image = Image.new(
         mode='RGBA',
         size=(grid_width + pixel_thickness, grid_height + pixel_thickness),
-        color=(255, 255, 255, 5)
+        color=(255, 255, 255, 15)
     )
     draw = ImageDraw.Draw(image)
 
