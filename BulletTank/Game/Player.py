@@ -41,7 +41,7 @@ class Player:
             result = choices.get(direction, 'default')
             tmp_coordinates = [self.coordinates[0] +
                                result[0], self.coordinates[1] + result[1]]
-            if (self.x_start < tmp_coordinates[0] < self.x_end) or (self.y_start < tmp_coordinates[1] < self.y_end):
+            if (self.x_end < tmp_coordinates[0] < self.x_start) or (self.y_end < tmp_coordinates[1] < self.y_start):
                 pass
             elif tmp_coordinates in other_coords:
                 pass

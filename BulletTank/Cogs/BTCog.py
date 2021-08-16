@@ -54,8 +54,8 @@ class BTCog(commands.Cog, name="Bullet Tank Game"):
         Returns how many action points the author has
         """
         msg = "You do not have any action points"
-        if BT.check_if_playing(ctx.message.author):
-            msg = BT.get_ac_points(ctx.message.author)
+        if BT.check_if_playing(ctx.message.author.mention):
+            msg = BT.get_ac_points(ctx.message.author.mention)
         await ctx.send(msg)
 
     @commands.command(description=MoveDescription)
@@ -64,8 +64,8 @@ class BTCog(commands.Cog, name="Bullet Tank Game"):
         Moves a player if possible
         """
         msg = None
-        if BT.check_if_playing(ctx.message.author):
-            if BT.move_player(ctx.message.author, dir):
+        if BT.check_if_playing(ctx.message.author.mention):
+            if BT.move_player(ctx.message.author.mention, dir):
                 msg = '**`SUCCESS`**'
             else:
                 msg = "Unable to move you!"
@@ -79,8 +79,8 @@ class BTCog(commands.Cog, name="Bullet Tank Game"):
         """
         Shoots a target if possible
         """
-        if BT.check_if_playing(ctx.message.author):
-            if BT.shoot_player(ctx.message.author, target):
+        if BT.check_if_playing(ctx.message.author.mention):
+            if BT.shoot_player(ctx.message.author.mention, target):
                 msg = "Nice shot!"
             else:
                 msg = "No shot, too bad"
@@ -93,8 +93,8 @@ class BTCog(commands.Cog, name="Bullet Tank Game"):
         """
         Give an amount of action points to another player
         """
-        if BT.check_if_playing(ctx.message.author):
-            if BT.send_ac_point(ctx.message.author, target):
+        if BT.check_if_playing(ctx.message.author.mention):
+            if BT.send_ac_point(ctx.message.author.mention, target):
                 msg = "You've given one of your action points to someone else!"
             else:
                 msg = "You can't give them an action point."
@@ -107,8 +107,8 @@ class BTCog(commands.Cog, name="Bullet Tank Game"):
         """
         Increase the range of your tank -- up to a max of 3
         """
-        if BT.check_if_playing(ctx.message.author):
-            if BT.increase_range(ctx.message.author):
+        if BT.check_if_playing(ctx.message.author.mention):
+            if BT.increase_range(ctx.message.author.mention):
                 msg = "You've increased your range!"
             else:
                 msg = "Cannot increase range."
