@@ -119,6 +119,8 @@ def shoot_player(source, target):
             return True
         else:
             del players_list[enemy]
+            return True
+    return False
 
 
 def increase_range(user_id):
@@ -149,6 +151,7 @@ def get_all_coords():
 
 
 def start_game():
+    global game_running
     game_running = True
     return "\n".join(str(i) for i in players_list)
 
