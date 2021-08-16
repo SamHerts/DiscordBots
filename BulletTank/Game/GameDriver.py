@@ -1,4 +1,4 @@
-from discord import player
+# from discord import player
 from discord.ext.commands.core import check
 from . import Player
 from . import Display
@@ -23,7 +23,8 @@ A player must receive 30% of the vote to receive the Action Point
 """
 
 blank_grid = Display.grid
-number_of_players = 4
+grid_size = [20, 10]
+# number_of_players = 4
 players_list = []
 game_running = False
 curr_grid = blank_grid
@@ -82,7 +83,8 @@ def check_if_playing(player):
 
 
 def add_user(player_name):
-    if not game_running and len(players_list) < number_of_players and not check_if_playing(player_name):
+    # if not game_running and len(players_list) < number_of_players and not check_if_playing(player_name):
+    if not game_running and not check_if_playing(player_name):
 
         players_list.append(Player.Player(
             user_id=player_name, color=list(Display.colors)[len(players_list)], coordinates=get_valid_random_coordinates()))
@@ -96,9 +98,9 @@ def move_player(user_id, dir):
     return players_list[friend].move(dir, get_all_coords())
 
 
-def admin_administer_points():
+def admin_administer_points(amount):
     for p in players_list:
-        distribute_action_points(p, 1)
+        distribute_action_points(p, amount)
 
 
 def send_ac_point(source, target):
@@ -150,9 +152,19 @@ def get_all_coords():
     return coords_list
 
 
-def start_game():
+def start_game(grid_length, grid_height):
     global game_running
+    # global number_of_players
+    global grid_size
+    global blank_grid
     game_running = True
+    # number_of_players = num_players
+    grid_size = [grid_length, grid_height]
+    print("Drawing Grid")
+    blank_grid = Display.draw_grid(step=grid_length, grid_width=10440,
+                                   grid_height=5220, pixel_thickness=10)
+    print("Grid finished drawing! Sending list of players")
+
     return "\n".join(str(i) for i in players_list)
 
 

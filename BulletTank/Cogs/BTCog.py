@@ -38,7 +38,7 @@ class BTCog(commands.Cog, name="Bullet Tank Game"):
     @commands.command(description=JoinGameDescription)
     async def JoinGame(self, ctx):
         """
-        Adds the author to the game -- only if a game isn't currently in progress
+        Adds the author to the game
         """
         msg = None
         if BT.add_user(ctx.message.author.mention):
@@ -48,7 +48,7 @@ class BTCog(commands.Cog, name="Bullet Tank Game"):
 
         await ctx.send(msg)
 
-    @commands.command(description=GetActionDescription)
+    @commands.command(description=GetActionDescription, enabled=False)
     async def GetActionPoints(self, ctx):
         """
         Returns how many action points the author has
@@ -58,7 +58,7 @@ class BTCog(commands.Cog, name="Bullet Tank Game"):
             msg = BT.get_ac_points(ctx.message.author.mention)
         await ctx.send(msg)
 
-    @commands.command(description=MoveDescription)
+    @commands.command(description=MoveDescription, enabled=False)
     async def Move(self, ctx, dir: str):
         """
         Moves a player if possible
@@ -74,7 +74,7 @@ class BTCog(commands.Cog, name="Bullet Tank Game"):
 
         await ctx.send(msg)
 
-    @commands.command(description=ShootDescription)
+    @commands.command(description=ShootDescription, enabled=False)
     async def Shoot(self, ctx, target: Member):
         """
         Shoots a target if possible
@@ -88,7 +88,7 @@ class BTCog(commands.Cog, name="Bullet Tank Game"):
             msg = "You're not even playing!"
         await ctx.send(msg)
 
-    @commands.command(description=GiveActionDescription)
+    @commands.command(description=GiveActionDescription, enabled=False)
     async def GiveActionPoint(self, ctx, target: Member):
         """
         Give an amount of action points to another player
@@ -102,7 +102,7 @@ class BTCog(commands.Cog, name="Bullet Tank Game"):
             msg = "You're not even playing!"
         await ctx.send(msg)
 
-    @commands.command()
+    @commands.command(enabled=False)
     async def IncreaseRange(self, ctx):
         """
         Increase the range of your tank -- up to a max of 3
@@ -123,7 +123,7 @@ class BTCog(commands.Cog, name="Bullet Tank Game"):
         """
         await ctx.send(rules)
 
-    @commands.command(description=ShowBoardDescription)
+    @commands.command(description=ShowBoardDescription, enabled=False)
     async def ShowBoard(self, ctx):
         """
         Sends the current board state to Discord
@@ -136,23 +136,40 @@ class BTCog(commands.Cog, name="Bullet Tank Game"):
 
     @commands.command(name="RP", hidden=True)
     @commands.has_role("Administrator")
-    async def release_points(self, ctx):
+    async def release_points(self, ctx, amount: int):
         """
         Admin only: Give points to players
         """
-        BT.admin_administer_points()
-        await ctx.send("Everyone has received an action point!")
+        BT.admin_administer_points(amount)
+        await ctx.send(f"Everyone has received {amount} action points!")
 
     @commands.command(hidden=True)
     @commands.has_role("Administrator")
-    async def NewGame(self, ctx, number_of_players, grid_length, grid_height):
+    async def NewGame(self, ctx, grid_length, grid_height):
         """
         Admin only: start a new game
         """
+        for command in self.get_commands():
+            if command.name == "ShowBoard" or command.name == "IncreaseRange" or command.name == "GiveActionPoints" or command.name == "Shoot" or command.name == "Move" or command.name == "GetActionPoints" or command.name == "JoinGame"or command.name == "NewGame":
+                command.enabled = not command.enabled
+                print(f"Disabling {command.name}")
+
         async with ctx.typing():
-            msg = str(BT.start_game())
+            msg = str(BT.start_game(grid_length, grid_height))
             await ctx.send("A new game has begun! It is too late to join.\nGood Luck to all.")
             await ctx.send(msg)
+
+    @NewGame.error
+    async def NewGame_error(self, ctx, error):
+        """A local Error Handler for the new game command.
+        This will only listen for errors in NewGame.
+        The global on_command_error will still be invoked after.
+        """
+
+        # Check if our required argument inp is missing.
+        if isinstance(error, commands.MissingRequiredArgument):
+            if error.param.name == 'grid_length' or error.param.name == 'grid_height':
+                await ctx.send("You forgot to give me a grid size!\nTry NewGame 20 10")
 
 
 def setup(bot):

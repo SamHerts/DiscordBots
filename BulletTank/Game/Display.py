@@ -44,7 +44,7 @@ def draw_grid(grid_step, grid_height, grid_width, pixel_thickness):
     image = Image.new(
         mode='RGBA',
         size=(grid_width + pixel_thickness, grid_height + pixel_thickness),
-        color=(255, 255, 255, 0)
+        color=(255, 255, 255, 5)
     )
     draw = ImageDraw.Draw(image)
 
@@ -52,18 +52,19 @@ def draw_grid(grid_step, grid_height, grid_width, pixel_thickness):
     y_end = image.height
     x_end = image.width
     step_size = int(image.width / grid_step)
-
+    print("Drawing X lines")
     for x in range(0, image.width, step_size):
         line = ((x + int(thickness / 2) - 1, y_start),
                 (x + (thickness / 2) - 1, y_end))
         draw.line(line, fill=(0, 0, 0, 255), width=thickness)
-
+    print("Drawing Y lines")
     for y in range(0, image.height, step_size):
         line = ((x_start, y + int(thickness / 2) - 1),
                 (x_end, y + int(thickness / 2) - 1))
         draw.line(line, fill=(0, 0, 0, 255), width=thickness)
 
     del draw
+    print("Returning a new image!")
     return image
 
 

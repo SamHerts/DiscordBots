@@ -28,6 +28,7 @@ class Player:
         Validate Direction, Action Points, and occupied, then move that direction.
         Directions are Cardinal - N,S,E,W and the four diagonals -NW, NE, SW, SE
         """
+        print(f"{self.coordinates=}, {direction=}, {other_coords=}")
         choices = {'W': (-1, 0),
                    'E': (1, 0),
                    'S': (0, 1),
@@ -41,11 +42,14 @@ class Player:
             result = choices.get(direction, 'default')
             tmp_coordinates = [self.coordinates[0] +
                                result[0], self.coordinates[1] + result[1]]
-            if (self.x_end < tmp_coordinates[0] < self.x_start) or (self.y_end < tmp_coordinates[1] < self.y_start):
+            if not (self.x_start <= tmp_coordinates[0] <= self.x_end) or not (self.y_start <= tmp_coordinates[1] <= self.y_end):
+                print(f"outside of map: {tmp_coordinates=}")
                 pass
             elif tmp_coordinates in other_coords:
+                print(f"on top of someone: {tmp_coordinates=}")
                 pass
             else:
+                print(f"Able to move: {tmp_coordinates=}")
                 self.coordinates = tmp_coordinates
                 self.use_action()
                 action_taken = True
