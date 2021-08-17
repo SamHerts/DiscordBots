@@ -51,7 +51,7 @@ def update_grid():
 def generate_coordinates():
     x = np.random.randint(0, grid_size[0]-1)
     y = np.random.randint(0, grid_size[1]-1)
-    return x, y
+    return [x, y]
 
 
 def check_valid_coords(coordinates):
@@ -88,7 +88,7 @@ def add_user(player_name):
     if not game_running and not check_if_playing(player_name):
 
         players_list.append(Player.Player(
-            user_id=player_name, color=list(Display.colors)[len(players_list)], coordinates=get_valid_random_coordinates()))
+            user_id=player_name, color=list(Display.colors)[len(players_list)], coordinates=[0, 0]))
         return True
     else:
         return False
@@ -148,7 +148,7 @@ def get_index(source, target=None):
 def get_all_coords():
     coords_list = []
     for p in players_list:
-        coords_list.append(p.coordinates)
+        coords_list.append(list(p.coordinates))
     return coords_list
 
 
@@ -157,9 +157,16 @@ def start_game(grid_length, grid_height):
     # global number_of_players
     global grid_size
     global blank_grid
+    grid_size = [grid_length, grid_height]
+    for p in players_list:
+        print(f"{p.coordinates=}")
+        temp = get_valid_random_coordinates()
+        p.coordinates = temp
+        print(f"{temp=}")
+        print(f"{p.coordinates=}")
     game_running = True
     # number_of_players = num_players
-    grid_size = [grid_length, grid_height]
+
     grid_pixel_length = 522*grid_length
     grid_pixel_height = 522*grid_height
     blank_grid = Display.draw_grid(grid_step=grid_length, grid_width=grid_pixel_length,

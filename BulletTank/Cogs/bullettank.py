@@ -39,7 +39,7 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
     async def on_ready(self):
         print("BTCog has been loaded")
 
-    @commands.command(description=JoinGameDescription)
+    @commands.command(description=JoinGameDescription, aliases=['Join'])
     async def JoinGame(self, ctx):
         """
         Adds the author to the game
@@ -52,7 +52,7 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
 
         await ctx.send(msg)
 
-    @commands.command(description=GetActionDescription, enabled=False)
+    @commands.command(description=GetActionDescription, enabled=False, aliases=['ActionPoints', 'AP'])
     async def GetActionPoints(self, ctx):
         """
         Returns how many action points the author has
@@ -83,16 +83,16 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
         """
         Shoots a target if possible
         """
-        if BT.check_if_playing(ctx.message.author.mention):
+        if BT.check_if_playing(ctx.message.author.mention) and BT.check_if_playing(target.mention):
             if BT.shoot_player(ctx.message.author.mention, target.mention):
                 msg = "Nice shot! Your Range has been reset to 1"
             else:
                 msg = "No shot, too bad"
         else:
-            msg = "You're not even playing!"
+            msg = "You or your target are not even playing!"
         await ctx.send(msg)
 
-    @commands.command(description=GiveActionDescription, enabled=False)
+    @commands.command(description=GiveActionDescription, enabled=False, aliases=['Give'])
     async def GiveActionPoint(self, ctx, target: discord.Member):
         """
         Give an amount of action points to another player
@@ -127,7 +127,7 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
         """
         await ctx.send(rules)
 
-    @commands.command(description=ShowBoardDescription, enabled=False)
+    @commands.command(description=ShowBoardDescription, enabled=False, aliases=['ShowMap', 'Map', 'Board'])
     async def ShowBoard(self, ctx):
         """
         Sends the current board state to Discord
@@ -157,7 +157,7 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
         Admin only: start a new game
         """
         for command in self.get_commands():
-            if command.name == "ShowBoard" or command.name == "IncreaseRange" or command.name == "GiveActionPoints" or command.name == "Shoot" or command.name == "Move" or command.name == "GetActionPoints" or command.name == "JoinGame"or command.name == "NewGame":
+            if command.name == "ShowBoard" or command.name == "IncreaseRange" or command.name == "GiveActionPoint" or command.name == "Shoot" or command.name == "Move" or command.name == "GetActionPoints" or command.name == "JoinGame"or command.name == "NewGame":
                 command.enabled = not command.enabled
                 if command.enabled:
                     print(f"Enabling {command.name}")

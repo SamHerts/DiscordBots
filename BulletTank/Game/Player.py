@@ -71,7 +71,7 @@ class Player:
         """
         Validate Distance??, and Number of Actions points > 2, then give to target.
         """
-        if self.has_action() and check_range(self.coordinates, target, self.range):
+        if self.has_action() and check_range(self.coordinates, target.coordinates, self.range):
             self.use_action()
             return True
         else:
@@ -89,7 +89,7 @@ class Player:
             return False
 
     def take_damage(self, amount=1):
-        if self.health > 0:
+        if self.health > 1:
             self.health = self.health - amount
             return True
         else:

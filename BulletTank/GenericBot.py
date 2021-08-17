@@ -83,6 +83,7 @@ async def on_command_error(ctx, error):
             ctx.command), file=sys.stderr)
         traceback.print_exception(
             type(error), error, error.__traceback__, file=sys.stderr)
+        raise error
 
 
 @bot.command(
