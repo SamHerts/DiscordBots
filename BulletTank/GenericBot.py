@@ -100,7 +100,7 @@ async def load(ctx, cog=None):
                 timestamp=ctx.message.created_at
             )
 
-            for ext in os.listdir(".BulletTank/Cogs/"):
+            for ext in os.listdir("./BulletTank/Cogs/"):
                 if ext.endswith(".py") and not ext.startswith("_"):
                     try:
                         bot.load_extension(f"Cogs.{ext[:-3]}")
