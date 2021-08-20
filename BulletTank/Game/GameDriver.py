@@ -25,7 +25,7 @@ Defeated Players are added to the Angel Box and vote to give out bonus Action Po
 A player must receive 30% of the vote to receive the Action Point
 """
 
-blank_grid = Display.grid
+blank_grid = None
 grid_size = [20, 10]
 # number_of_players = 4
 players_list = []
@@ -190,7 +190,7 @@ if __name__ == '__main__':
     add_user("alpha", debug=global_debug)
     add_user("beta", debug=global_debug)
     add_user("gamma", debug=global_debug)
-    if False:
+    if True:
         add_user("delta")
         add_user("epsilon")
         add_user("zeta")
@@ -202,27 +202,34 @@ if __name__ == '__main__':
     print("Attempting to move alpha N: ",move_player(players_list[0].user_id, "N"))
     print("Attempting to move alpha W: ",move_player(players_list[0].user_id, "W"))
     print("Attempting to move alpha E: ",move_player(players_list[0].user_id, "E"))
+    print("Showing grid\n")
     update_grid().show()
     print("Attempting to shoot beta: ", shoot_player("alpha", "beta"))
     print("Attempting to increase range: ", increase_range("alpha"))
     print("Attempting to shoot beta: ", shoot_player("alpha", "beta"))
     print("Attempting to increase range: ", increase_range("alpha"))
     print("Attempting to shoot beta: ", shoot_player("alpha", "beta"))
+    print("Showing grid\n")
     update_grid().show()
     print("Attempting to shoot beta: ", shoot_player("alpha", "beta"))
     print("Attempting to increase range: ", increase_range("alpha"))
     print("Attempting to shoot beta: ", shoot_player("alpha", "beta"))
     print("Attempting to increase range: ", increase_range("alpha"))
     print("Attempting to shoot beta: ", shoot_player("alpha", "beta"))
+    print("Showing grid\n")
     update_grid().show()
     print("Attempting to shoot beta: ", shoot_player("alpha", "beta"))
     print("Attempting to increase range: ", increase_range("alpha"))
     print("Attempting to shoot beta: ", shoot_player("alpha", "beta"))
     print("Attempting to increase range: ", increase_range("alpha"))
     print("Attempting to shoot beta: ", shoot_player("alpha", "beta"))
+    print("Showing grid\n")
     update_grid().show()
     print("Attempting to increase range: ", increase_range("alpha"))
+    print("Attempting to give an action point: ", send_ac_point("alpha", "beta"))
     print("Attempting to increase range: ", increase_range("alpha"))
+    print("Attempting to give an action point: ", send_ac_point("alpha", "beta"))
     print("Attempting to shoot beta: ", shoot_player("alpha", "beta"))
+    print("Showing grid\n")
     update_grid().show()
 

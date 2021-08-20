@@ -22,14 +22,26 @@ step = 20
 width = 10440
 height = 5220
 thickness = 10
+tank_resolution = 522
 
-four_tank = Image.open(os.getcwd()+'\BulletTank\Sprites\\4HTank.png')
-three_tank = Image.open(os.getcwd()+'\BulletTank\Sprites\\3HTank.png')
-two_tank = Image.open(os.getcwd()+'\BulletTank\Sprites\\2HTank.png')
-one_tank = Image.open(os.getcwd()+'\BulletTank\Sprites\\1HTank.png')
-grid = Image.open(os.getcwd()+'\BulletTank\Sprites\Board.png')
+#four_tank = Image.open(os.getcwd()+'\BulletTank\Sprites\\4HTank.png')
+#three_tank = Image.open(os.getcwd()+'\BulletTank\Sprites\\3HTank.png')
+#two_tank = Image.open(os.getcwd()+'\BulletTank\Sprites\\2HTank.png')
+#one_tank = Image.open(os.getcwd()+'\BulletTank\Sprites\\1HTank.png')
+# grid = Image.open(os.getcwd()+'\BulletTank\Sprites\Board.png')
 
-tank_list = {1: one_tank, 2: two_tank, 3: three_tank, 4: four_tank}
+# tank_list = {1: one_tank, 2: two_tank, 3: three_tank, 4: four_tank}
+
+def get_tank(tank_health):
+    if tank_health == 1:
+        tank_image = Image.open(os.getcwd()+'\BulletTank\Sprites\\1HTank.png')        
+    elif tank_health == 2:
+        tank_image = Image.open(os.getcwd()+'\BulletTank\Sprites\\2HTank.png')
+    elif tank_health == 3:
+        tank_image = Image.open(os.getcwd()+'\BulletTank\Sprites\\3HTank.png')
+    elif tank_health == 4:
+        tank_image = Image.open(os.getcwd()+'\BulletTank\Sprites\\4HTank.png')
+    return tank_image
 
 
 def change_color(image: Image.Image, color: str) -> Image.Image:
@@ -83,13 +95,16 @@ def place_tank(board, health, coord, tank_color):
     given coordinates relative to grid, place tank
     --need refactoring for different image sizes
     """
-    tank = tank_list.get(health)
+
+    #tank = tank_list.get(health)
+    tank = get_tank(health)
     new_board = board.copy()
     x1, y1 = coord
-    coord = x1 * 522 + thickness, y1 * 522 + thickness
+    coord = x1 * tank_resolution + thickness, y1 * tank_resolution + thickness
     if tank_color is not None:
         tank = change_color(tank, tank_color)
     new_board.paste(tank, coord, tank.convert('RGBA'))
+    tank.close()
     return new_board
 
 
