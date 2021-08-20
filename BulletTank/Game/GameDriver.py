@@ -1,10 +1,10 @@
 # from discord import player
 from discord import user
-from discord.ext.commands.core import check
-from . import Player
-from . import Display
+# from discord.ext.commands.core import check
+# from . import Player
+# from . import Display
 import Display
-import Player
+from Player import Player
 # from PIL import Image, ImageDraw
 import numpy as np
 
@@ -85,23 +85,24 @@ def check_if_playing(player):
     return False
 
 
-def add_user(player_name):
+def add_user(player_name, debug=False):
     # if not game_running and len(players_list) < number_of_players and not check_if_playing(player_name):
     if not game_running and not check_if_playing(player_name):
-
-        players_list.append(Player.Player(
-            user_id=player_name, color=list(Display.colors)[len(players_list)], coordinates=[0, 0]))
+        new_player = Player(user_id=player_name, color=list(Display.colors)[len(players_list)], coordinates=[0, 0])
+        if debug:
+            print(f"{new_player=}")
+        players_list.append(new_player)
         return True
     else:
         return False
 
 
-def move_player(user_id, dir):
+def move_player(user_id, dir: str):
     friend = get_index(user_id)
     return players_list[friend].move(dir, get_all_coords(), grid_size)
 
 
-def admin_administer_points(amount):
+def admin_administer_points(amount: int):
     for p in players_list:
         distribute_action_points(p, amount)
 
@@ -160,11 +161,16 @@ def start_game(grid_length, grid_height, debug=False):
     global grid_size
     global blank_grid
     grid_size = [grid_length, grid_height]
-    for p in players_list:
+    for index, p in enumerate(players_list):
         
         temp = get_valid_random_coordinates()
         p.coordinates = temp
         if debug:
+            if index == 0:
+                p.coordinates = [0, 0]
+                p.action_points = 100
+            if index == 1:
+                p.coordinates = [4, 0]
             print(f"{p.user_id=}")
             print(f"{p.coordinates=}")
     game_running = True
@@ -179,15 +185,44 @@ def start_game(grid_length, grid_height, debug=False):
 
 
 if __name__ == '__main__':
+    global_debug = True
     print("Debugging Logic")
-    add_user("alpha")
-    add_user("beta")
-    add_user("gamma")
-    add_user("delta")
-    add_user("epsilon")
-    add_user("zeta")
-    add_user("eta")
-    add_user("theta")
-    add_user("iota")
-    add_user("kappa")
-    start_game(20, 20, debug=True)
+    add_user("alpha", debug=global_debug)
+    add_user("beta", debug=global_debug)
+    add_user("gamma", debug=global_debug)
+    if False:
+        add_user("delta")
+        add_user("epsilon")
+        add_user("zeta")
+        add_user("eta")
+        add_user("theta")
+        add_user("iota")
+        add_user("kappa")
+    start_game(20, 20, debug=global_debug)
+    print("Attempting to move alpha N: ",move_player(players_list[0].user_id, "N"))
+    print("Attempting to move alpha W: ",move_player(players_list[0].user_id, "W"))
+    print("Attempting to move alpha E: ",move_player(players_list[0].user_id, "E"))
+    update_grid().show()
+    print("Attempting to shoot beta: ", shoot_player("alpha", "beta"))
+    print("Attempting to increase range: ", increase_range("alpha"))
+    print("Attempting to shoot beta: ", shoot_player("alpha", "beta"))
+    print("Attempting to increase range: ", increase_range("alpha"))
+    print("Attempting to shoot beta: ", shoot_player("alpha", "beta"))
+    update_grid().show()
+    print("Attempting to shoot beta: ", shoot_player("alpha", "beta"))
+    print("Attempting to increase range: ", increase_range("alpha"))
+    print("Attempting to shoot beta: ", shoot_player("alpha", "beta"))
+    print("Attempting to increase range: ", increase_range("alpha"))
+    print("Attempting to shoot beta: ", shoot_player("alpha", "beta"))
+    update_grid().show()
+    print("Attempting to shoot beta: ", shoot_player("alpha", "beta"))
+    print("Attempting to increase range: ", increase_range("alpha"))
+    print("Attempting to shoot beta: ", shoot_player("alpha", "beta"))
+    print("Attempting to increase range: ", increase_range("alpha"))
+    print("Attempting to shoot beta: ", shoot_player("alpha", "beta"))
+    update_grid().show()
+    print("Attempting to increase range: ", increase_range("alpha"))
+    print("Attempting to increase range: ", increase_range("alpha"))
+    print("Attempting to shoot beta: ", shoot_player("alpha", "beta"))
+    update_grid().show()
+

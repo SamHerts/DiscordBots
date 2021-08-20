@@ -24,7 +24,8 @@ class Player:
         Validate Direction, Action Points, and occupied, then move that direction.
         Directions are Cardinal - N,S,E,W and the four diagonals -NW, NE, SW, SE
         """
-        print(f"{self.coordinates=}, {direction=}, {other_coords=}")
+        #TODO: add debug
+        # print(f"{self.coordinates=}, {direction=}, {other_coords=}")
         choices = {'W': (-1, 0),
                    'E': (1, 0),
                    'S': (0, 1),
@@ -39,13 +40,13 @@ class Player:
             tmp_coordinates = [self.coordinates[0] +
                                result[0], self.coordinates[1] + result[1]]
             if not (0 <= tmp_coordinates[0] < max_size[0]) or not (0 <= tmp_coordinates[1] < max_size[1]):
-                print(f"outside of map: {tmp_coordinates=}")
+                # debug:print(f"outside of map: {tmp_coordinates=}")
                 pass
             elif tmp_coordinates in other_coords:
-                print(f"on top of someone: {tmp_coordinates=}")
+                # debug:print(f"on top of someone: {tmp_coordinates=}")
                 pass
             else:
-                print(f"Able to move: {tmp_coordinates=}")
+                #debug: print(f"Able to move: {tmp_coordinates=}")
                 self.coordinates = tmp_coordinates
                 self.use_action()
                 action_taken = True
@@ -55,16 +56,14 @@ class Player:
         """
         Validate Action Points, and Target.
         """
-        print(f"Shooting! With a range of {self.range}")
+        # debug:print(f"Shooting! With a range of {self.range}")
         if self.has_action() and check_range(self.coordinates, target.coordinates, self.range):
-            print(
-                f"{self.user_id} at location {self.coordinates} shot {target.user_id} at location {target.coordinates}!")
+            # debug:print(f"{self.user_id} at location {self.coordinates} shot {target.user_id} at location {target.coordinates}!")
             self.use_action()
             self.range = 1
             return True
         else:
-            print(
-                f"{self.user_id} at location {self.coordinates} missed {target.user_id} at location {target.coordinates}!")
+            # debug: print(f"{self.user_id} at location {self.coordinates} missed {target.user_id} at location {target.coordinates}!")
             return False
 
     def give_action(self, target):
@@ -107,6 +106,5 @@ def check_range(first_coordinates, second_coordinates, max_range):
     """
     Check if the first coordinates are within the distance of the second coordinates
     """
-    print(
-        f"First Coords: {first_coordinates}\nSecond Coords: {second_coordinates}\nDistance: {dist(first_coordinates, second_coordinates)}")
+    # debug: print(f"First Coords: {first_coordinates}\nSecond Coords: {second_coordinates}\nDistance: {dist(first_coordinates, second_coordinates)}")
     return floor(dist(first_coordinates, second_coordinates)) <= max_range
