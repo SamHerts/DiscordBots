@@ -1,16 +1,23 @@
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageColor
 import numpy as np
 import os
 
+colors = {
+    'aqua':                 '#00FFFF',
+    'blue':                 '#0000FF',
+    'brown':                '#A52A2A',
+    'chartreuse':           '#7FFF00',
+    'coral':                '#FF7F50',
+    'crimson':              '#DC143C',
+    'darkgreen':            '#006400',
+    'deeppink':             '#FF1493',
+    'deepskyblue':          '#00BFFF',
+    'goldenrod':            '#DAA520',
+    'navajowhite':          '#FFDEAD',
+    'fuchsia':              '#FF00FF',
+    'steelblue':            '#4682B4'
+}
 
-colors = {'WHITE': [255, 255, 255],
-          'RED': [255, 0, 0],
-          'PURPLE': [255, 0, 255],
-          'GREEN': [0, 128, 0],
-          'OLIVE': [128, 128, 0],
-          'YELLOW': [250, 250, 0],
-          'BLUE': [0, 0, 255],
-          'AQUA': [0, 255, 255]}
 step = 20
 width = 10440
 height = 5220
@@ -25,12 +32,12 @@ grid = Image.open(os.getcwd()+'\BulletTank\Sprites\Board.png')
 tank_list = {1: one_tank, 2: two_tank, 3: three_tank, 4: four_tank}
 
 
-def change_color(image: Image.Image, color: list) -> Image.Image:
+def change_color(image: Image.Image, color: str) -> Image.Image:
     """
     Adjust the color of a sprite from black to given color
     """
     data = np.array(image.convert('RGBA'))
-
+    color = ImageColor.getcolor(color, "RGB")
     red, green, blue = data[:, :, 0], data[:, :, 1], data[:, :, 2]
     mask = (red == 0) & (green == 0) & (blue == 0)
     data[:, :, :3][mask] = color
