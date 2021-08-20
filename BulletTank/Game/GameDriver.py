@@ -3,6 +3,8 @@ from discord import user
 from discord.ext.commands.core import check
 from . import Player
 from . import Display
+import Display
+import Player
 # from PIL import Image, ImageDraw
 import numpy as np
 
@@ -152,28 +154,40 @@ def get_all_coords():
     return coords_list
 
 
-def start_game(grid_length, grid_height):
+def start_game(grid_length, grid_height, debug=False):
     global game_running
     # global number_of_players
     global grid_size
     global blank_grid
     grid_size = [grid_length, grid_height]
     for p in players_list:
-        print(f"{p.coordinates=}")
+        
         temp = get_valid_random_coordinates()
         p.coordinates = temp
-        print(f"{temp=}")
-        print(f"{p.coordinates=}")
+        if debug:
+            print(f"{p.user_id=}")
+            print(f"{p.coordinates=}")
     game_running = True
     # number_of_players = num_players
 
     grid_pixel_length = 522*grid_length
     grid_pixel_height = 522*grid_height
     blank_grid = Display.draw_grid(grid_step=grid_length, grid_width=grid_pixel_length,
-                                   grid_height=grid_pixel_height, pixel_thickness=10)
+                                   grid_height=grid_pixel_height, pixel_thickness=10, debug=debug)
 
     return "\n".join(str(i) for i in players_list)
 
 
 if __name__ == '__main__':
-    print("This is the GameDriver class, no need to run this as main.")
+    print("Debugging Logic")
+    add_user("alpha")
+    add_user("beta")
+    add_user("gamma")
+    add_user("delta")
+    add_user("epsilon")
+    add_user("zeta")
+    add_user("eta")
+    add_user("theta")
+    add_user("iota")
+    add_user("kappa")
+    start_game(20, 20, debug=True)

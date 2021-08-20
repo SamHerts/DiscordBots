@@ -38,7 +38,7 @@ def change_color(image: Image.Image, color: list) -> Image.Image:
     return Image.fromarray(data)
 
 
-def draw_grid(grid_step, grid_height, grid_width, pixel_thickness):
+def draw_grid(grid_step, grid_height, grid_width, pixel_thickness, debug=False):
     """
     Draws a game board grid with alpha values - needs refactoring for different sizes and shapes
     """
@@ -64,7 +64,9 @@ def draw_grid(grid_step, grid_height, grid_width, pixel_thickness):
         line = ((x_start, y + int(thickness / 2) - 1),
                 (x_end, y + int(thickness / 2) - 1))
         draw.line(line, fill=(0, 0, 0, 255), width=thickness)
-
+    if debug:
+        print(f"Drawing a grid with parameters: {grid_step=}\n{grid_height=}\n{grid_width=}\n{pixel_thickness=}")
+        image.show()
     del draw
     return image
 
