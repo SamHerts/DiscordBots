@@ -99,6 +99,7 @@ def place_tank(board, health, coord, tank_color):
     #tank = tank_list.get(health)
     tank = get_tank(health)
     new_board = board.copy()
+    board.close()
     x1, y1 = coord
     coord = x1 * tank_resolution + thickness, y1 * tank_resolution + thickness
     if tank_color is not None:
