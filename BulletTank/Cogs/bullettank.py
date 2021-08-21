@@ -1,7 +1,7 @@
 
 import discord
 from discord.ext import commands
-import Game.GameDriver as BT
+from Game import GameDriver as BT
 from utils.BTsettings import BT_Discord_Webhook
 from io import BytesIO
 
@@ -29,6 +29,9 @@ rules = """
     Defeated Players are added to the Angel Box and vote to give out bonus Action Points.
     A player must receive 30% of the vote to receive the Action Point
     """
+
+toggle_commands = ["ShowBoard", "IncreaseRange", "GiveActionPoint", "Shoot",
+                   "Move",  "GetActionPoints", "JoinGame", "NewGame", "WhereTheFuckAmI"]
 
 
 class bullettank(commands.Cog, name="Bullet Tank Game"):
@@ -86,6 +89,7 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
         if BT.check_if_playing(ctx.message.author.mention) and BT.check_if_playing(target.mention):
             if BT.shoot_player(ctx.message.author.mention, target.mention):
                 msg = "Nice shot! Your Range has been reset to 1"
+                await ctx.message.add_reaction("🔫")
             else:
                 msg = "No shot, too bad"
         else:
@@ -125,7 +129,19 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
         """
         Lists the rules of the game
         """
+        await ctx.message.add_reaction("🔫")
         await ctx.send(rules)
+
+    @commands.command(enabled=False, aliases=['Where', 'Who', 'TheFuck?'])
+    async def WhereTheFuckAmI(self, ctx):
+        """
+        Lists the rules of the game
+        """
+        if BT.check_if_playing(ctx.message.author.mention):
+            msg = BT.where_the_fuck_am_i(ctx.message.author.mention)
+        else:
+            msg = "You're not even playing!"
+        await ctx.send(msg)
 
     @commands.command(description=ShowBoardDescription, enabled=False, aliases=['ShowMap', 'Map', 'Board'])
     async def ShowBoard(self, ctx):
@@ -157,7 +173,7 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
         Admin only: start a new game
         """
         for command in self.get_commands():
-            if command.name == "ShowBoard" or command.name == "IncreaseRange" or command.name == "GiveActionPoint" or command.name == "Shoot" or command.name == "Move" or command.name == "GetActionPoints" or command.name == "JoinGame"or command.name == "NewGame":
+            if command.name in toggle_commands:
                 command.enabled = not command.enabled
                 if command.enabled:
                     print(f"Enabling {command.name}")
@@ -181,6 +197,16 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
             if error.param.name == 'grid_length' or error.param.name == 'grid_height':
                 await ctx.send("You forgot to give me a grid size!\nTry NewGame 20 10")
         raise error
+
+    @commands.command()
+    async def helpreee(self, ctx):
+
+        # await ctx.message.delete()
+
+        msg = await ctx.send("Eh idk just react")
+
+        await msg.add_reaction("⬅️")
+        await msg.add_reaction("➡️")
 
 
 def setup(bot):

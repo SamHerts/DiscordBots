@@ -2,9 +2,9 @@
 from discord import user
 # from discord.ext.commands.core import check
 # from . import Player
-# from . import Display
-import Display
-from Player import Player
+from . import Display
+# import Display
+from .Player import Player
 # from PIL import Image, ImageDraw
 import numpy as np
 
@@ -154,6 +154,11 @@ def get_all_coords():
     for p in players_list:
         coords_list.append(list(p.coordinates))
     return coords_list
+
+
+def where_the_fuck_am_i(author):
+    index = get_index(author)
+    return str(players_list[index])
 
 
 def start_game(grid_length, grid_height, debug=False):

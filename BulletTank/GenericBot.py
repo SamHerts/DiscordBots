@@ -144,6 +144,7 @@ async def load(ctx, cog=None):
                     )
                 except Exception:
                     desired_trace = traceback.format_exc()
+                    print(desired_trace)
                     embed.add_field(
                         name=f"Failed to Load: `{ext}`",
                         value=desired_trace,
