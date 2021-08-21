@@ -19,10 +19,10 @@ colors = {
 }
 
 step = 20
-width = 10440
-height = 5220
+# width = 10440
+# height = 5220
 thickness = 10
-tank_resolution = 522
+tank_resolution = 215
 
 #four_tank = Image.open(os.getcwd()+'\BulletTank\Sprites\\4HTank.png')
 #three_tank = Image.open(os.getcwd()+'\BulletTank\Sprites\\3HTank.png')
@@ -32,9 +32,10 @@ tank_resolution = 522
 
 # tank_list = {1: one_tank, 2: two_tank, 3: three_tank, 4: four_tank}
 
+
 def get_tank(tank_health):
     if tank_health == 1:
-        tank_image = Image.open(os.getcwd()+'\BulletTank\Sprites\\1HTank.png')        
+        tank_image = Image.open(os.getcwd()+'\BulletTank\Sprites\\1HTank.png')
     elif tank_health == 2:
         tank_image = Image.open(os.getcwd()+'\BulletTank\Sprites\\2HTank.png')
     elif tank_health == 3:
@@ -84,7 +85,8 @@ def draw_grid(grid_step, grid_height, grid_width, pixel_thickness, debug=False):
                 (x_end, y + int(thickness / 2) - 1))
         draw.line(line, fill=(0, 0, 0, 255), width=thickness)
     if debug:
-        print(f"Drawing a grid with parameters: {grid_step=}\n{grid_height=}\n{grid_width=}\n{pixel_thickness=}")
+        print(
+            f"Drawing a grid with parameters: {grid_step=}\n{grid_height=}\n{grid_width=}\n{pixel_thickness=}")
         image.show()
     del draw
     return image
@@ -101,7 +103,8 @@ def place_tank(board, health, coord, tank_color):
     new_board = board.copy()
     board.close()
     x1, y1 = coord
-    coord = x1 * tank_resolution + thickness, y1 * tank_resolution + thickness
+    coord = x1 * tank_resolution + thickness + \
+        1, y1 * tank_resolution + thickness + 66
     if tank_color is not None:
         tank = change_color(tank, tank_color)
     new_board.paste(tank, coord, tank.convert('RGBA'))

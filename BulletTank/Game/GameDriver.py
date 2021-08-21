@@ -88,7 +88,8 @@ def check_if_playing(player):
 def add_user(player_name, debug=False):
     # if not game_running and len(players_list) < number_of_players and not check_if_playing(player_name):
     if not game_running and not check_if_playing(player_name):
-        new_player = Player(user_id=player_name, color=list(Display.colors)[len(players_list)], coordinates=[0, 0])
+        new_player = Player(user_id=player_name, color=list(
+            Display.colors)[len(players_list)], coordinates=[0, 0])
         if debug:
             print(f"{new_player=}")
         players_list.append(new_player)
@@ -162,7 +163,7 @@ def start_game(grid_length, grid_height, debug=False):
     global blank_grid
     grid_size = [grid_length, grid_height]
     for index, p in enumerate(players_list):
-        
+
         temp = get_valid_random_coordinates()
         p.coordinates = temp
         if debug:
@@ -176,8 +177,8 @@ def start_game(grid_length, grid_height, debug=False):
     game_running = True
     # number_of_players = num_players
 
-    grid_pixel_length = 522*grid_length
-    grid_pixel_height = 522*grid_height
+    grid_pixel_length = Display.tank_resolution*grid_length
+    grid_pixel_height = Display.tank_resolution*grid_height
     blank_grid = Display.draw_grid(grid_step=grid_length, grid_width=grid_pixel_length,
                                    grid_height=grid_pixel_height, pixel_thickness=10, debug=debug)
 
@@ -186,6 +187,8 @@ def start_game(grid_length, grid_height, debug=False):
 
 if __name__ == '__main__':
     global_debug = True
+    x_size = 35
+    y_size = 30
     print("Debugging Logic")
     add_user("alpha", debug=global_debug)
     add_user("beta", debug=global_debug)
@@ -198,10 +201,13 @@ if __name__ == '__main__':
         add_user("theta")
         add_user("iota")
         add_user("kappa")
-    start_game(20, 20, debug=global_debug)
-    print("Attempting to move alpha N: ",move_player(players_list[0].user_id, "N"))
-    print("Attempting to move alpha W: ",move_player(players_list[0].user_id, "W"))
-    print("Attempting to move alpha E: ",move_player(players_list[0].user_id, "E"))
+    start_game(x_size, y_size, debug=global_debug)
+    print("Attempting to move alpha N: ",
+          move_player(players_list[0].user_id, "N"))
+    print("Attempting to move alpha W: ",
+          move_player(players_list[0].user_id, "W"))
+    print("Attempting to move alpha E: ",
+          move_player(players_list[0].user_id, "E"))
     print("Showing grid\n")
     update_grid().show()
     print("Attempting to shoot beta: ", shoot_player("alpha", "beta"))
@@ -226,10 +232,11 @@ if __name__ == '__main__':
     print("Showing grid\n")
     update_grid().show()
     print("Attempting to increase range: ", increase_range("alpha"))
-    print("Attempting to give an action point: ", send_ac_point("alpha", "beta"))
+    print("Attempting to give an action point: ",
+          send_ac_point("alpha", "beta"))
     print("Attempting to increase range: ", increase_range("alpha"))
-    print("Attempting to give an action point: ", send_ac_point("alpha", "beta"))
+    print("Attempting to give an action point: ",
+          send_ac_point("alpha", "beta"))
     print("Attempting to shoot beta: ", shoot_player("alpha", "beta"))
     print("Showing grid\n")
     update_grid().show()
-
