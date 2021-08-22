@@ -73,6 +73,22 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
         msg = None
         if BT.check_if_playing(ctx.message.author.mention):
             if BT.move_player(ctx.message.author.mention, dir):
+                if dir == "N":
+                    await ctx.message.add_reaction("⬆️")
+                if dir == "E":
+                    await ctx.message.add_reaction("➡️")
+                if dir == "W":
+                    await ctx.message.add_reaction("⬅️")
+                if dir == "S":
+                    await ctx.message.add_reaction("⬇️")
+                if dir == "NE":
+                    await ctx.message.add_reaction("↗️")
+                if dir == "NW":
+                    await ctx.message.add_reaction("↖️")
+                if dir == "SE":
+                    await ctx.message.add_reaction("↘️")
+                if dir == "SW":
+                    await ctx.message.add_reaction("↙️")
                 msg = '**`SUCCESS`**'
             else:
                 msg = "Unable to move you!"
@@ -92,6 +108,7 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
                 await ctx.message.add_reaction("🔫")
             else:
                 msg = "No shot, too bad"
+                await ctx.message.add_reaction("❌")
         else:
             msg = "You or your target are not even playing!"
         await ctx.send(msg)
@@ -129,7 +146,7 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
         """
         Lists the rules of the game
         """
-        await ctx.message.add_reaction("🔫")
+        # await ctx.message.add_reaction("🔫")
         await ctx.send(rules)
 
     @commands.command(enabled=False, aliases=['Where', 'Who', 'TheFuck?'])
@@ -137,11 +154,24 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
         """
         Lists the rules of the game
         """
-        if BT.check_if_playing(ctx.message.author.mention):
-            msg = BT.where_the_fuck_am_i(ctx.message.author.mention)
+        auth = ctx.message.author.mention
+        if BT.check_if_playing(auth):
+            async with ctx.typing():
+                embed = discord.Embed(
+                    title="You're right the fuck there!",
+                    color=int(BT.get_user_color(auth)),
+                    timestamp=ctx.message.created_at
+                )
+                embed.add_field(
+                    name=BT.where_the_fuck_am_i(auth),
+                    value='\uFEFF',
+                    inline=False
+                )
+
+                await ctx.send(embed=embed)
         else:
             msg = "You're not even playing!"
-        await ctx.send(msg)
+            await ctx.send(msg)
 
     @commands.command(description=ShowBoardDescription, enabled=False, aliases=['ShowMap', 'Map', 'Board'])
     async def ShowBoard(self, ctx):
@@ -165,6 +195,15 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
         """
         BT.admin_administer_points(amount)
         await ctx.send(f"Everyone has received {amount} action points!")
+
+    @commands.command(name="AddPlayer", hidden=True)
+    @commands.has_role("Administrator")
+    async def add_player(self, ctx, player: discord.Member):
+        """
+        Admin only: Give points to players
+        """
+        if BT.add_user(player.mention):
+            await ctx.send(f'Adding you to the game, {player.mention}')
 
     @commands.command(hidden=True)
     @commands.has_role("Administrator")
@@ -197,16 +236,6 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
             if error.param.name == 'grid_length' or error.param.name == 'grid_height':
                 await ctx.send("You forgot to give me a grid size!\nTry NewGame 20 10")
         raise error
-
-    @commands.command()
-    async def helpreee(self, ctx):
-
-        # await ctx.message.delete()
-
-        msg = await ctx.send("Eh idk just react")
-
-        await msg.add_reaction("⬅️")
-        await msg.add_reaction("➡️")
 
 
 def setup(bot):

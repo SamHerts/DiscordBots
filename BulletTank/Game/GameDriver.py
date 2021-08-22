@@ -1,5 +1,5 @@
 # from discord import player
-from discord import user
+from discord import Colour
 # from discord.ext.commands.core import check
 # from . import Player
 from . import Display
@@ -159,6 +159,11 @@ def get_all_coords():
 def where_the_fuck_am_i(author):
     index = get_index(author)
     return str(players_list[index])
+
+
+def get_user_color(author):
+    index = get_index(author)
+    return str(players_list[index].color)
 
 
 def start_game(grid_length, grid_height, debug=False):
