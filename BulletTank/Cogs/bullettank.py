@@ -2,6 +2,7 @@
 import discord
 from discord.ext import commands
 from Game import GameDriver as BT
+from Game.Display import colors
 from utils.BTsettings import BT_Discord_Webhook
 from io import BytesIO
 
@@ -42,7 +43,13 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
     async def on_ready(self):
         print("BTCog has been loaded")
 
+    def bullet_tank_check():
+        async def predicate(ctx):
+            return ctx.author.has_role("playing bullet tank") or ctx.author.has_role("Testing")
+        return commands.check(predicate)
+
     @commands.command(description=JoinGameDescription, aliases=['Join'])
+    @commands.has_any_role("Testing", "playing bullet tank")
     async def JoinGame(self, ctx):
         """
         Adds the author to the game
@@ -56,6 +63,7 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
         await ctx.send(msg)
 
     @commands.command(description=GetActionDescription, enabled=False, aliases=['ActionPoints', 'AP'])
+    @commands.has_any_role("Testing", "playing bullet tank")
     async def GetActionPoints(self, ctx):
         """
         Returns how many action points the author has
@@ -66,6 +74,7 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
         await ctx.send(msg)
 
     @commands.command(description=MoveDescription, enabled=False)
+    @commands.has_any_role("Testing", "playing bullet tank")
     async def Move(self, ctx, dir: str):
         """
         Moves a player if possible
@@ -98,6 +107,7 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
         await ctx.send(msg)
 
     @commands.command(description=ShootDescription, enabled=False)
+    @commands.has_any_role("Testing", "playing bullet tank")
     async def Shoot(self, ctx, target: discord.Member):
         """
         Shoots a target if possible
@@ -114,6 +124,7 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
         await ctx.send(msg)
 
     @commands.command(description=GiveActionDescription, enabled=False, aliases=['Give'])
+    @commands.has_any_role("Testing", "playing bullet tank")
     async def GiveActionPoint(self, ctx, target: discord.Member):
         """
         Give an amount of action points to another player
@@ -128,6 +139,7 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
         await ctx.send(msg)
 
     @commands.command(enabled=False)
+    @commands.has_any_role("Testing", "playing bullet tank")
     async def IncreaseRange(self, ctx):
         """
         Increase the range of your tank -- up to a max of 3
@@ -150,23 +162,24 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
         await ctx.send(rules)
 
     @commands.command(enabled=False, aliases=['Where', 'Who', 'TheFuck?'])
+    @commands.has_any_role("Testing", "playing bullet tank")
     async def WhereTheFuckAmI(self, ctx):
         """
         Lists the rules of the game
         """
         auth = ctx.message.author.mention
         if BT.check_if_playing(auth):
+            color_hash = colors[BT.get_user_color(auth)]
+            color_hex = "0X" + color_hash[1:]
             async with ctx.typing():
+
                 embed = discord.Embed(
-                    title="You're right the fuck there!",
-                    color=int(BT.get_user_color(auth)),
+                    title=f"You're right the fuck there, at coordinates: {BT.where_the_fuck_am_i(auth)}",
+                    color=int(color_hex, 0),
                     timestamp=ctx.message.created_at
                 )
-                embed.add_field(
-                    name=BT.where_the_fuck_am_i(auth),
-                    value='\uFEFF',
-                    inline=False
-                )
+                embed.set_author(name=ctx.message.author,
+                                 icon_url=ctx.message.author.avatar_url)
 
                 await ctx.send(embed=embed)
         else:
@@ -174,6 +187,7 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
             await ctx.send(msg)
 
     @commands.command(description=ShowBoardDescription, enabled=False, aliases=['ShowMap', 'Map', 'Board'])
+    @commands.has_any_role("Testing", "playing bullet tank")
     async def ShowBoard(self, ctx):
         """
         Sends the current board state to Discord
@@ -182,7 +196,7 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
             with BytesIO() as image_binary:
                 BT.update_grid().save(image_binary, 'PNG')
                 image_binary.seek(0)
-                embed = discord.Embed(title=f'{self.bot.user.name} Map', description='\uFEFF',
+                embed = discord.Embed(title=f'{self.bot.user.name} Map', description=f"Players left alive: {BT.get_alive()}",
                                       colour=ctx.author.colour, timestamp=ctx.message.created_at)
                 image = discord.File(fp=image_binary, filename='Board.png')
                 await ctx.send(embed=embed, file=image)
