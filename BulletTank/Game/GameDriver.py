@@ -85,6 +85,10 @@ def check_if_playing(player):
     return False
 
 
+def get_alive():
+    return len(players_list)
+
+
 def add_user(player_name, debug=False):
     # if not game_running and len(players_list) < number_of_players and not check_if_playing(player_name):
     if not game_running and not check_if_playing(player_name):
@@ -158,7 +162,7 @@ def get_all_coords():
 
 def where_the_fuck_am_i(author):
     index = get_index(author)
-    return str(players_list[index])
+    return str(players_list[index].coordinates)
 
 
 def get_user_color(author):

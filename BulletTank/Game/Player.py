@@ -24,7 +24,7 @@ class Player:
         Validate Direction, Action Points, and occupied, then move that direction.
         Directions are Cardinal - N,S,E,W and the four diagonals -NW, NE, SW, SE
         """
-        #TODO: add debug
+        # TODO: add debug
         # print(f"{self.coordinates=}, {direction=}, {other_coords=}")
         choices = {'W': (-1, 0),
                    'E': (1, 0),
