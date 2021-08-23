@@ -35,13 +35,13 @@ tank_resolution = 215
 
 def get_tank(tank_health):
     if tank_health == 1:
-        tank_image = Image.open(os.getcwd()+'\BulletTank\Sprites\\1HTank.png')
+        tank_image = Image.open(os.getcwd()+'\Sprites\\1HTank.png')
     elif tank_health == 2:
-        tank_image = Image.open(os.getcwd()+'\BulletTank\Sprites\\2HTank.png')
+        tank_image = Image.open(os.getcwd()+'\Sprites\\2HTank.png')
     elif tank_health == 3:
-        tank_image = Image.open(os.getcwd()+'\BulletTank\Sprites\\3HTank.png')
+        tank_image = Image.open(os.getcwd()+'\Sprites\\3HTank.png')
     elif tank_health == 4:
-        tank_image = Image.open(os.getcwd()+'\BulletTank\Sprites\\4HTank.png')
+        tank_image = Image.open(os.getcwd()+'\Sprites\\4HTank.png')
     return tank_image
 
 
