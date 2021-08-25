@@ -2,19 +2,21 @@ from math import dist, floor
 
 
 class Player:
-    user_id = 0
-    health = 4
-    color = (0, 0, 0)
-    action_points = 3
-    range = 1
-    coordinates = [0, 0]
 
-    def __init__(self, user_id, color, coordinates=None):
+    
+
+
+    def __init__(self, user_id = "default user", color = 'black', coordinates: list = None):
         if coordinates is None:
             coordinates = [0, 0]
         self.user_id = user_id
         self.color = color
         self.coordinates = coordinates
+        self.health = 4
+        self.action_points = 3
+        self.range = 1
+
+        
 
     def __str__(self) -> str:
         return "{0}, your coordinates are {1}, and your color is {2}".format(self.user_id, self.coordinates, self.color)

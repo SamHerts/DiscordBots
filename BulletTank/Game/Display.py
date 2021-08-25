@@ -15,7 +15,7 @@ colors = {
     'goldenrod':            '#DAA520',
     'navajowhite':          '#FFDEAD',
     'fuchsia':              '#FF00FF',
-    'steelblue':            '#4682B4'
+    'black':                '#000000'
 }
 
 step = 20
@@ -24,18 +24,12 @@ step = 20
 thickness = 10
 tank_resolution = 215
 
-#four_tank = Image.open(os.getcwd()+'\BulletTank\Sprites\\4HTank.png')
-#three_tank = Image.open(os.getcwd()+'\BulletTank\Sprites\\3HTank.png')
-#two_tank = Image.open(os.getcwd()+'\BulletTank\Sprites\\2HTank.png')
-#one_tank = Image.open(os.getcwd()+'\BulletTank\Sprites\\1HTank.png')
-# grid = Image.open(os.getcwd()+'\BulletTank\Sprites\Board.png')
-
-# tank_list = {1: one_tank, 2: two_tank, 3: three_tank, 4: four_tank}
-
-
-def get_tank(tank_health):
+def get_tank(tank_health: int) -> Image.Image:
+    curr_dir = os.getcwd()
+    if not os.path.exists(curr_dir+'\Sprites\\1HTank.png'):
+        curr_dir = curr_dir + "\BulletTank\Game"
     if tank_health == 1:
-        tank_image = Image.open(os.getcwd()+'\Sprites\\1HTank.png')
+        tank_image = Image.open(curr_dir+'\Sprites\\1HTank.png')
     elif tank_health == 2:
         tank_image = Image.open(os.getcwd()+'\Sprites\\2HTank.png')
     elif tank_health == 3:
@@ -58,9 +52,9 @@ def change_color(image: Image.Image, color: str) -> Image.Image:
     return Image.fromarray(data)
 
 
-def draw_grid(grid_step, grid_height, grid_width, pixel_thickness, debug=False):
+def draw_grid(grid_step: int, grid_height: int, grid_width: int, pixel_thickness: int, debug=False) -> Image.Image:
     """
-    Draws a game board grid with alpha values - needs refactoring for different sizes and shapes
+    Draws a game board grid with alpha values
     """
 
     image = Image.new(
@@ -92,7 +86,7 @@ def draw_grid(grid_step, grid_height, grid_width, pixel_thickness, debug=False):
     return image
 
 
-def place_tank(board, health, coord, tank_color):
+def place_tank(board: Image.Image, health: int, coord: list, tank_color: str) -> Image.Image:
     """
     given coordinates relative to grid, place tank
     --need refactoring for different image sizes

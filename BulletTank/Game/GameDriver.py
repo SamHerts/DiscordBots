@@ -27,13 +27,35 @@ A player must receive 30% of the vote to receive the Action Point
 
 blank_grid = None
 grid_size = [20, 10]
-# number_of_players = 4
+number_of_players = 12
 players_list = []
 game_running = False
 curr_grid = blank_grid
 
 
-def distribute_action_points(target, amount):
+def get_index(source, target=None):
+    """
+    Attempts to find the given user_id's, otherwise returns None
+    """
+    friend = enemy = None
+    if target is not None:
+        for index, p in enumerate(players_list):
+            if p.user_id == source:
+                friend = index
+            if p.user_id == target:
+                enemy = index
+        return friend, enemy
+    else:
+        for index, p in enumerate(players_list):
+            if p.user_id == source:
+                friend = index
+        return friend
+
+
+def distribute_action_points(target: Player, amount: int):
+    """
+    Increase the amount of action points a player has
+    """
     print(f"Distributing {amount} to {target.user_id}")
 
     target.action_points += amount
@@ -42,6 +64,9 @@ def distribute_action_points(target, amount):
 
 
 def update_grid():
+    """
+    Takes all active players and returns a populated grid
+    """
     new_grid = blank_grid.copy()
     for x in players_list:
         new_grid = Display.place_tank(
@@ -50,13 +75,19 @@ def update_grid():
     return new_grid
 
 
-def generate_coordinates():
-    x = np.random.randint(0, grid_size[0]-1)
-    y = np.random.randint(0, grid_size[1]-1)
+def generate_coordinates(boundary):
+    """
+    Returns a pair of randomized coordinates
+    """
+    x = np.random.randint(0, boundary[0]-1)
+    y = np.random.randint(0, boundary[1]-1)
     return [x, y]
 
 
-def check_valid_coords(coordinates):
+def check_valid_coords(coordinates: list):
+    """
+    Ensures coordinates are not already taken
+    """
     if len(players_list):
         for p in players_list:
             if coordinates == p.coordinates:
@@ -64,10 +95,13 @@ def check_valid_coords(coordinates):
     return True
 
 
-def get_valid_random_coordinates():
+def get_valid_random_coordinates(grid_size):
+    """
+    Continues to generate rando coordinates until successful
+    """
     while True:
         try:
-            coords = generate_coordinates()
+            coords = generate_coordinates(grid_size)
         except:
             continue
 
@@ -78,20 +112,22 @@ def get_valid_random_coordinates():
     return coords
 
 
-def check_if_playing(player):
-    for p in players_list:
-        if player == p.user_id:
-            return True
-    return False
+def check_if_playing(player: Player.user_id):
+    return get_index(player) is not None
 
 
 def get_alive():
+    """
+    Returns the total count of active players
+    """
     return len(players_list)
 
 
-def add_user(player_name, debug=False):
-    # if not game_running and len(players_list) < number_of_players and not check_if_playing(player_name):
-    if not game_running and not check_if_playing(player_name):
+def add_user(player_name: Player.user_id, debug=False):
+    """
+    Creates a Player object and appends it to the active player list
+    """
+    if not game_running and len(players_list) < number_of_players and not check_if_playing(player_name):
         new_player = Player(user_id=player_name, color=list(
             Display.colors)[len(players_list)], coordinates=[0, 0])
         if debug:
@@ -138,21 +174,6 @@ def increase_range(user_id):
     return players_list[index].increase_range()
 
 
-def get_index(source, target=None):
-    if target is not None:
-        for index, p in enumerate(players_list):
-            if p.user_id == source:
-                friend = index
-            if p.user_id == target:
-                enemy = index
-        return friend, enemy
-    else:
-        for index, p in enumerate(players_list):
-            if p.user_id == source:
-                friend = index
-        return friend
-
-
 def get_all_coords():
     coords_list = []
     for p in players_list:
@@ -171,15 +192,16 @@ def get_user_color(author):
 
 
 def start_game(grid_length, grid_height, debug=False):
+    """
+    Initializes game board and places players within boundaries
+    """
     global game_running
     # global number_of_players
     global grid_size
     global blank_grid
     grid_size = [grid_length, grid_height]
     for index, p in enumerate(players_list):
-
-        temp = get_valid_random_coordinates()
-        p.coordinates = temp
+        p.coordinates = get_valid_random_coordinates(grid_size)
         if debug:
             if index == 0:
                 p.coordinates = [0, 0]
@@ -189,7 +211,6 @@ def start_game(grid_length, grid_height, debug=False):
             print(f"{p.user_id=}")
             print(f"{p.coordinates=}")
     game_running = True
-    # number_of_players = num_players
 
     grid_pixel_length = Display.tank_resolution*grid_length
     grid_pixel_height = Display.tank_resolution*grid_height
