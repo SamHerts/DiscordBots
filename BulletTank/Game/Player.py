@@ -3,8 +3,6 @@ from math import dist, floor
 
 class Player:
 
-    
-
 
     def __init__(self, user_id = "default user", color = 'black', coordinates: list = None):
         if coordinates is None:
@@ -15,11 +13,11 @@ class Player:
         self.health = 4
         self.action_points = 3
         self.range = 1
-
         
 
     def __str__(self) -> str:
         return "{0}, your coordinates are {1}, and your color is {2}".format(self.user_id, self.coordinates, self.color)
+        
 
     def move(self, direction, other_coords, max_size: list) -> bool:
         """
