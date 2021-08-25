@@ -252,6 +252,13 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
         raise error
 
 
+    #async def cog_command_error(self, ctx, error):
+    #    if hasattr(ctx.command, 'on_error'):
+    #        return
+    #    if isinstance(error, )
+    #    return await super().cog_command_error(ctx, error)
+
+
 def setup(bot):
     bot.add_cog(bullettank(bot))
 
