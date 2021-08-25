@@ -1,12 +1,15 @@
-# from discord import player
-from discord import Colour
-# from discord.ext.commands.core import check
-# from . import Player
-from . import Display
-# import Display
-from .Player import Player
-# from PIL import Image, ImageDraw
-import numpy as np
+
+from numpy.random.mtrand import randint
+
+try:
+    from . import Display
+    from . import Player
+except ImportError:
+    try:
+        import Display
+        import Player
+    except ImportError:
+        raise
 
 """
 Rules:
@@ -79,8 +82,8 @@ def generate_coordinates(boundary):
     """
     Returns a pair of randomized coordinates
     """
-    x = np.random.randint(0, boundary[0]-1)
-    y = np.random.randint(0, boundary[1]-1)
+    x = randint(0, boundary[0]-1)
+    y = randint(0, boundary[1]-1)
     return [x, y]
 
 
@@ -112,7 +115,7 @@ def get_valid_random_coordinates(grid_size):
     return coords
 
 
-def check_if_playing(player: Player.user_id):
+def check_if_playing(player: str):
     return get_index(player) is not None
 
 
@@ -123,12 +126,12 @@ def get_alive():
     return len(players_list)
 
 
-def add_user(player_name: Player.user_id, debug=False):
+def add_user(player_name: str, debug=False):
     """
     Creates a Player object and appends it to the active player list
     """
     if not game_running and len(players_list) < number_of_players and not check_if_playing(player_name):
-        new_player = Player(user_id=player_name, color=list(
+        new_player = Player.Player(user_id=player_name, color=list(
             Display.colors)[len(players_list)], coordinates=[0, 0])
         if debug:
             print(f"{new_player=}")
@@ -212,18 +215,16 @@ def start_game(grid_length, grid_height, debug=False):
             print(f"{p.coordinates=}")
     game_running = True
 
-    grid_pixel_length = Display.tank_resolution*grid_length
-    grid_pixel_height = Display.tank_resolution*grid_height
-    blank_grid = Display.draw_grid(grid_step=grid_length, grid_width=grid_pixel_length,
-                                   grid_height=grid_pixel_height, pixel_thickness=10, debug=debug)
+    blank_grid = Display.draw_grid(grid_step=grid_length, grid_width=grid_length,
+                                   grid_height=grid_height, debug=debug)
 
     return "\n".join(str(i) for i in players_list)
 
 
 if __name__ == '__main__':
     global_debug = True
-    x_size = 35
-    y_size = 30
+    x_size = 20
+    y_size = 10
     print("Debugging Logic")
     add_user("alpha", debug=global_debug)
     add_user("beta", debug=global_debug)
@@ -236,6 +237,9 @@ if __name__ == '__main__':
         add_user("theta")
         add_user("iota")
         add_user("kappa")
+        add_user("eleven")
+        add_user("twelve")
+        add_user("thirteen")
     start_game(x_size, y_size, debug=global_debug)
     print("Attempting to move alpha N: ",
           move_player(players_list[0].user_id, "N"))

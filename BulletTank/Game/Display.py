@@ -27,15 +27,15 @@ tank_resolution = 215
 def get_tank(tank_health: int) -> Image.Image:
     curr_dir = os.getcwd()
     if not os.path.exists(curr_dir+'\Sprites\\1HTank.png'):
-        curr_dir = curr_dir + "\BulletTank\Game"
+        curr_dir = curr_dir + "\BulletTank\Sprites"
     if tank_health == 1:
-        tank_image = Image.open(curr_dir+'\Sprites\\1HTank.png')
+        tank_image = Image.open(curr_dir+'\\1HTank.png')
     elif tank_health == 2:
-        tank_image = Image.open(os.getcwd()+'\Sprites\\2HTank.png')
+        tank_image = Image.open(curr_dir+'\\2HTank.png')
     elif tank_health == 3:
-        tank_image = Image.open(os.getcwd()+'\Sprites\\3HTank.png')
+        tank_image = Image.open(curr_dir+'\\3HTank.png')
     elif tank_health == 4:
-        tank_image = Image.open(os.getcwd()+'\Sprites\\4HTank.png')
+        tank_image = Image.open(curr_dir+'\\4HTank.png')
     return tank_image
 
 
@@ -52,15 +52,15 @@ def change_color(image: Image.Image, color: str) -> Image.Image:
     return Image.fromarray(data)
 
 
-def draw_grid(grid_step: int, grid_height: int, grid_width: int, pixel_thickness: int, debug=False) -> Image.Image:
+def draw_grid(grid_step: int, grid_height: int, grid_width: int, debug=False) -> Image.Image:
     """
     Draws a game board grid with alpha values
     """
 
     image = Image.new(
         mode='RGBA',
-        size=(grid_width + pixel_thickness, grid_height + pixel_thickness),
-        color=(255, 255, 255, 15)
+        size=(grid_width*tank_resolution + thickness, grid_height*tank_resolution + thickness),
+        color=(0, 0, 0, 130)
     )
     draw = ImageDraw.Draw(image)
 
@@ -80,7 +80,7 @@ def draw_grid(grid_step: int, grid_height: int, grid_width: int, pixel_thickness
         draw.line(line, fill=(0, 0, 0, 255), width=thickness)
     if debug:
         print(
-            f"Drawing a grid with parameters: {grid_step=}\n{grid_height=}\n{grid_width=}\n{pixel_thickness=}")
+            f"Drawing a grid with parameters: {grid_step=}\n{grid_height=}\n{grid_width=}\n{thickness=}")
         image.show()
     del draw
     return image
