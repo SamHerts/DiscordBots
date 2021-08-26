@@ -24,18 +24,20 @@ step = 20
 thickness = 10
 tank_resolution = 215
 
+
 def get_tank(tank_health: int) -> Image.Image:
     curr_dir = os.getcwd()
     if not os.path.exists(curr_dir+'\Sprites\\1HTank.png'):
-        curr_dir = curr_dir + "\BulletTank\Sprites"
+        curr_dir = curr_dir + "\BulletTank"
+        print(f"{curr_dir=}")
     if tank_health == 1:
-        tank_image = Image.open(curr_dir+'\\1HTank.png')
+        tank_image = Image.open(curr_dir+'\Sprites\\1HTank.png')
     elif tank_health == 2:
-        tank_image = Image.open(curr_dir+'\\2HTank.png')
+        tank_image = Image.open(curr_dir+'\Sprites\\2HTank.png')
     elif tank_health == 3:
-        tank_image = Image.open(curr_dir+'\\3HTank.png')
+        tank_image = Image.open(curr_dir+'\Sprites\\3HTank.png')
     elif tank_health == 4:
-        tank_image = Image.open(curr_dir+'\\4HTank.png')
+        tank_image = Image.open(curr_dir+'\Sprites\\4HTank.png')
     return tank_image
 
 
@@ -59,7 +61,8 @@ def draw_grid(grid_step: int, grid_height: int, grid_width: int, debug=False) ->
 
     image = Image.new(
         mode='RGBA',
-        size=(grid_width*tank_resolution + thickness, grid_height*tank_resolution + thickness),
+        size=(grid_width*tank_resolution + thickness,
+              grid_height*tank_resolution + thickness),
         color=(0, 0, 0, 130)
     )
     draw = ImageDraw.Draw(image)

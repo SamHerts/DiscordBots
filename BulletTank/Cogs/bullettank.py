@@ -123,6 +123,18 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
             msg = "You or your target are not even playing!"
         await ctx.send(msg)
 
+    @Shoot.error
+    async def Shoot_error(self, ctx, error):
+        """
+        A local Error Handler for the Shoot game command.
+        This will only listen for errors in Shoot.
+        The global on_command_error will still be invoked after.
+        """
+        # Check if our required argument inp is missing.
+        if isinstance(error, commands.MissingRequiredArgument):
+            await ctx.send("Who you trying to shoot? Try Shoot @Player")
+        raise error
+
     @commands.command(description=GiveActionDescription, enabled=False, aliases=['Give'])
     @commands.has_any_role("Testing", "playing bullet tank")
     async def GiveActionPoint(self, ctx, target: discord.Member):
@@ -165,7 +177,7 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
     @commands.has_any_role("Testing", "playing bullet tank")
     async def WhereTheFuckAmI(self, ctx):
         """
-        Lists the rules of the game
+        Tells you where the fuck you are
         """
         auth = ctx.message.author.mention
         if BT.check_if_playing(auth):
@@ -251,8 +263,7 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
                 await ctx.send("You forgot to give me a grid size!\nTry NewGame 20 10")
         raise error
 
-
-    #async def cog_command_error(self, ctx, error):
+    # async def cog_command_error(self, ctx, error):
     #    if hasattr(ctx.command, 'on_error'):
     #        return
     #    if isinstance(error, )
