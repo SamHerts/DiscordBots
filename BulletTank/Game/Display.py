@@ -27,17 +27,17 @@ tank_resolution = 215
 
 def get_tank(tank_health: int) -> Image.Image:
     curr_dir = os.getcwd()
-    if not os.path.exists(curr_dir+'\Sprites\\OneTank.png'):
-        curr_dir = curr_dir + "\BulletTank"
+    if not os.path.exists(curr_dir+'/Sprites/OneTank.png'):
+        curr_dir = curr_dir + "/BulletTank"
         print(f"{curr_dir=}")
     if tank_health == 1:
-        tank_image = Image.open(curr_dir+'\Sprites\OneTank.png')
+        tank_image = Image.open(curr_dir+'/Sprites/OneTank.png')
     elif tank_health == 2:
-        tank_image = Image.open(curr_dir+'\Sprites\TwoTank.png')
+        tank_image = Image.open(curr_dir+'/Sprites/TwoTank.png')
     elif tank_health == 3:
-        tank_image = Image.open(curr_dir+'\Sprites\ThreeTank.png')
+        tank_image = Image.open(curr_dir+'/Sprites/ThreeTank.png')
     elif tank_health == 4:
-        tank_image = Image.open(curr_dir+'\Sprites\FourTank.png')
+        tank_image = Image.open(curr_dir+'/Sprites/FourTank.png')
     return tank_image
 
 
