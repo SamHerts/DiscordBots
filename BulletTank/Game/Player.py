@@ -34,8 +34,8 @@ class Player:
         action_taken = False
         if self.has_action():
             result = choices.get(direction, 'default')
-            tmp_coordinates = [self.coordinates[0] +
-                               result[0], self.coordinates[1] + result[1]]
+            tmp_coordinates = [int(self.coordinates[0]) +
+                               int(result[0]), int(self.coordinates[1]) + int(result[1])]
             if not (0 <= tmp_coordinates[0] < max_size[0]) or not (0 <= tmp_coordinates[1] < max_size[1]):
                 # debug:print(f"outside of map: {tmp_coordinates=}")
                 pass
