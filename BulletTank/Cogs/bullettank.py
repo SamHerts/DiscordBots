@@ -225,14 +225,14 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
 
     @commands.command(name="AddPlayer", hidden=True)
     @commands.has_role("Administrator")
-    async def add_player(self, ctx, player: discord.Member, Color: str, CoordsX, CoordsY, Health: int):
+    async def add_player(self, ctx, player: discord.Member, Color: str, CoordsX, CoordsY, Health: int, Actions: int):
         """
         Admin only: Give points to players
         """
         print(
             f"{type(player)=}{player=}\n{type(Color)=}{Color=}\n{type(CoordsX)=}{CoordsX=}\n{type(Health)=}{Health=}")
         Coords = [int(CoordsX), int(CoordsY)]
-        if BT.add_user(player.mention, debug=True, color=Color, coords=Coords, health=Health):
+        if BT.add_user(player.mention, debug=True, color=Color, coords=Coords, health=Health, actions=Actions):
             await ctx.send(f'Adding you to the game, {player.mention}')
         else:
             ctx.send(f'Cannot add player')
