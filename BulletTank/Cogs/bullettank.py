@@ -1,4 +1,5 @@
 
+from typing import List
 import discord
 from discord.ext import commands
 from Game import GameDriver as BT
@@ -20,9 +21,9 @@ rules = """
     Last Player standing wins.
     Each day, players receive at least 1 Action Point.
     Action points are lost upon use
-    Action points can be transferred to other players
+    Action points can be transferred to other players for free
     Actions you can take:
-    Move one space
+    Move one space - N, S, E, W, NE. NW, SE, SW
     Shoot at a player within range
     Increase range - up to 3
     Transfer an Action Point to another Player
@@ -198,7 +199,7 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
             msg = "You're not even playing!"
             await ctx.send(msg)
 
-    @commands.command(description=ShowBoardDescription, enabled=False, aliases=['ShowMap', 'Map', 'Board'])
+    @commands.command(description=ShowBoardDescription, enabled=False, aliases=['ShowMap', 'Map', 'Board', 'Show'])
     @commands.has_any_role("Testing", "playing bullet tank")
     async def ShowBoard(self, ctx):
         """
@@ -224,11 +225,11 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
 
     @commands.command(name="AddPlayer", hidden=True)
     @commands.has_role("Administrator")
-    async def add_player(self, ctx, player: discord.Member):
+    async def add_player(self, ctx, player: discord.Member, Color: str, Coords: List, Health: int):
         """
         Admin only: Give points to players
         """
-        if BT.add_user(player.mention):
+        if BT.add_user(player.mention, debug=True, color=Color, coords=Coords, health=Health):
             await ctx.send(f'Adding you to the game, {player.mention}')
 
     @commands.command(hidden=True)

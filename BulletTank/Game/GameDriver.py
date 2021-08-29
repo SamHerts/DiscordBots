@@ -110,15 +110,20 @@ def get_alive():
     return len(players_list)
 
 
-def add_user(player_name: str, debug=False):
+def add_user(player_name: str, debug=False, color=None, coords=None, health=None):
     """
     Creates a Player object and appends it to the active player list
     """
-    if not game_running and len(players_list) < number_of_players and not check_if_playing(player_name):
+    if debug and not check_if_playing(player_name):
+        new_player = Player.Player(
+            user_id=player_name, color=color, coordinates=coords)
+        print(f"{new_player=}")
+        new_player.health = health
+        players_list.append(new_player)
+        return True
+    elif not game_running and len(players_list) < number_of_players and not check_if_playing(player_name):
         new_player = Player.Player(user_id=player_name, color=list(
             Display.colors)[len(players_list)], coordinates=[0, 0])
-        if debug:
-            print(f"{new_player=}")
         players_list.append(new_player)
         return True
     else:

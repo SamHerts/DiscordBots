@@ -87,7 +87,7 @@ async def on_command_error(ctx, error):
 
 
 @bot.command(
-    name='load', description="Load all/one of the bots cogs!"
+    name='load', description="Load all/one of the bots cogs!", hidden=True
 )
 @commands.is_owner()
 async def load(ctx, cog=None):
@@ -154,7 +154,7 @@ async def load(ctx, cog=None):
 
 
 @bot.command(
-    name='unload', description="Unload all/one of the bots cogs!"
+    name='unload', description="Unload all/one of the bots cogs!", hidden=True
 )
 @commands.is_owner()
 async def unload(ctx, cog=None):
@@ -219,7 +219,7 @@ async def unload(ctx, cog=None):
 
 
 @bot.command(
-    name='reload', description="Reload all/one of the bots cogs!"
+    name='reload', description="Reload all/one of the bots cogs!", hidden=True
 )
 @commands.is_owner()
 async def reload(ctx, cog=None):
