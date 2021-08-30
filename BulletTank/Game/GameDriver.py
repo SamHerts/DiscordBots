@@ -1,4 +1,5 @@
 
+from BulletTank.utils.CustomExceptions import occupied_space, out_of_actions, out_of_bounds
 from numpy.random.mtrand import randint
 
 try:
@@ -133,7 +134,14 @@ def add_user(player_name: str, debug=False, color=None, coords=None, health=None
 
 def move_player(user_id, dir: str):
     friend = get_index(user_id)
-    return players_list[friend].move(dir, get_all_coords(), grid_size)
+    try:
+        players_list[friend].move(dir, get_all_coords(), grid_size)
+    except out_of_bounds:
+        print("Got out of bounds exception")
+    except occupied_space:
+        print("Got occupied space exception")
+    except out_of_actions:
+        print("Got out of actions exception")
 
 
 def admin_administer_points(amount: int):

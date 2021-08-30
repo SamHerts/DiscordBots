@@ -1,3 +1,4 @@
+from BulletTank.utils.CustomExceptions import occupied_space, out_of_actions, out_of_bounds
 from math import dist, floor
 
 
@@ -38,15 +39,17 @@ class Player:
                                int(result[0]), int(self.coordinates[1]) + int(result[1])]
             if not (0 <= tmp_coordinates[0] < max_size[0]) or not (0 <= tmp_coordinates[1] < max_size[1]):
                 # debug:print(f"outside of map: {tmp_coordinates=}")
-                pass
+                raise out_of_bounds
             elif tmp_coordinates in other_coords:
                 # debug:print(f"on top of someone: {tmp_coordinates=}")
-                pass
+                raise occupied_space
             else:
                 #debug: print(f"Able to move: {tmp_coordinates=}")
                 self.coordinates = tmp_coordinates
                 self.use_action()
                 action_taken = True
+        else:
+            raise out_of_actions
         return action_taken
 
     def shoot(self, target):
