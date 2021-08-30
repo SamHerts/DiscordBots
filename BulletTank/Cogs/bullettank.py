@@ -5,6 +5,7 @@ from discord.ext import commands
 from Game import GameDriver as BT
 from Game.Display import colors
 from utils.BTsettings import BT_Discord_Webhook
+from utils import CustomExceptions as ce
 from io import BytesIO
 
 JoinGameDescription = "Add your tank to the game!"
@@ -269,12 +270,29 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
                 await ctx.send("You forgot to give me a grid size!\nTry NewGame 20 10")
         raise error
 
-    # async def cog_command_error(self, ctx, error):
-    #    if hasattr(ctx.command, 'on_error'):
-    #        return
-    #    if isinstance(error, )
-    #    return await super().cog_command_error(ctx, error)
+    @commands.Cog.listener()
+    async def on_command_error(self, ctx: commands.Context, e: commands.errors.CommandError) -> None:
+        command = ctx.command
 
+        if hasattr(e, "handled"):
+            print(f"Command {command} had its error already handled locally; ignoring.")
+            return
+        elif isinstance(e, commands.errors.CommandInvokeError):
+            if isinstance(e.original, ce.out_of_actions):
+                await ctx.send(f"You can't do that! You don't have any action points.")
+            elif isinstance(e.original, ce.not_playing):
+                await ctx.send(f"If you'd like to participate in Bullet Tank, wait for the current game to finish.")
+            elif isinstance(e.original, ce.out_of_bounds):
+                await ctx.send(f"You can't move off the map!")
+            elif isinstance(e.original, ce.occupied_space):
+                await ctx.send(f"You can't move into someone else!")
+            elif isinstance(e.original, ce.out_of_range):
+                await ctx.send(f"You're not in range to do that.")
+            return
+        print(
+            f"Command {command} invoked by {ctx.message.author} with error "
+            f"{e.__class__.__name__}: {e}"
+        )
 
 def setup(bot):
     bot.add_cog(bullettank(bot))
@@ -283,6 +301,3 @@ def setup(bot):
 def teardown(bot):
     print('BulletTank Cog Successfully Unloaded')
 
-
-if __name__ == '__main__':
-    print("This is a Discord Cog, no need to run this as main.")
