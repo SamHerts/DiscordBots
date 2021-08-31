@@ -302,21 +302,29 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
             return
         elif isinstance(e, commands.errors.CommandInvokeError):
             if isinstance(e.original, ce.out_of_actions):
-                await ctx.send(f"You can't do that! You don't have any action points.")
+                await ctx.send(self.make_embed(ctx, f"You can't do that! You don't have any action points."))
             elif isinstance(e.original, ce.not_playing):
-                await ctx.send(f"You are not currently playing! If you'd like to participate in Bullet Tank, wait for the current game to finish.")
+                await ctx.send(self.make_embed(ctx, f"You are not currently playing! If you'd like to participate in Bullet Tank, wait for the current game to finish."))
             elif isinstance(e.original, ce.out_of_bounds):
-                await ctx.send(f"You can't move off the map!")
+                await ctx.send(self.make_embed(ctx, f"You can't move off the map!"))
             elif isinstance(e.original, ce.occupied_space):
-                await ctx.send(f"You can't move into someone else!")
+                await ctx.send(self.make_embed(ctx, f"You can't move into someone else!"))
             elif isinstance(e.original, ce.out_of_range):
-                await ctx.send(f"You're not in range to do that.")
+                await ctx.send(self.make_embed(ctx, f"You're not in range to do that."))
             await ctx.message.add_reaction("❌")
             return
         print(
             f"Command {command} invoked by {ctx.message.author} with error "
             f"{e.__class__.__name__}: {e}"
         )
+
+    async def make_embed(self, ctx, message):
+        embed = discord.Embed(
+            title=message,
+            color=self.bot.color,
+            timestamp=ctx.message.created_at
+        )
+        return embed
 
 def setup(bot):
     bot.add_cog(bullettank(bot))
