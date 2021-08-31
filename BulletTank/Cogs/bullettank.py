@@ -259,6 +259,27 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
             await ctx.send("A new game has begun! It is too late to join.\nGood Luck to all.")
             await ctx.send(msg)
 
+    
+    @commands.command(hidden=True)
+    @commands.has_role("Administrator")
+    async def Export(self, ctx):
+        """
+        Admin only: Export the currently running game.
+        """
+        async with ctx.typing():
+            embed = discord.Embed(
+                title="Export of the current running game:",
+                color=0x808080,
+                timestamp=ctx.message.created_at
+            )
+            for player in BT.players_list:
+                embed.add_field(
+                    name=f"{player.user_id}",
+                    value=f"Color: {player.color}\Coordinates: {player.coordinates}\Health: {player.health}\nAction Points: {player.action_points}\nRange: {player.range}",
+                    inline=False
+                )
+            await ctx.send(embed)
+
     @NewGame.error
     async def NewGame_error(self, ctx, error):
         """A local Error Handler for the new game command.
