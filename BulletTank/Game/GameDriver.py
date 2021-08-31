@@ -119,6 +119,7 @@ def add_user(player_name: str, debug=False, color=None, coords=None, health=None
     """
     try:
         check_if_playing(player_name)
+        raise ce.already_playing
     except ce.not_playing:
         if debug:
             new_player = Player.Player(
@@ -184,7 +185,9 @@ def shoot_player(source, target):
         print("You're not close enough to shoot them!")
         raise
     except ce.health_is_zero:
+        del players_list[enemy]
         print("You've killed them!!")
+        raise
 
 
 def increase_range(user_id):
@@ -207,9 +210,14 @@ def where_the_fuck_am_i(author):
     return str(players_list[index].coordinates)
 
 
-def get_user_color(author):
+def get_user_color(author, hex=False):
     index = get_index(author)
-    return str(players_list[index].color)
+    if hex:
+        color_hash = Display.colors[players_list[index].color]
+        color_hex = "0X" + color_hash[1:]
+        return int(color_hex, 0)
+    else:
+        return str(players_list[index].color)
 
 
 def start_game(grid_length, grid_height, debug=False):
@@ -236,4 +244,4 @@ def start_game(grid_length, grid_height, debug=False):
     blank_grid = Display.draw_grid(grid_step=grid_length, grid_width=grid_length,
                                    grid_height=grid_height, debug=debug)
 
-    return "\n".join(str(i) for i in players_list)
+    return "\n\n".join(str(i) for i in players_list)

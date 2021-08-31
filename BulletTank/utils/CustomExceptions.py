@@ -24,3 +24,6 @@ class not_playing(Error):
 
 class too_many_players(Error):
     pass
+
+class already_playing(Error):
+    pass
