@@ -2,9 +2,11 @@
 from typing import List
 import discord
 from discord.ext import commands
+from discord.ext.commands.context import Context
 from Game import GameDriver as BT
 from Game.Display import colors
 from utils.BTsettings import BT_Discord_Webhook
+from utils import CustomExceptions as ce
 from io import BytesIO
 
 JoinGameDescription = "Add your tank to the game!"
@@ -55,13 +57,14 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
         """
         Adds the author to the game
         """
-        msg = None
-        if BT.add_user(ctx.message.author.mention):
-            msg = f'Adding you to the game, {ctx.message.author}'
-        else:
-            msg = f'Cannot add you to the game, either you are already in the game, there are too many players, or the game has already begun.'
+        try:
+            BT.add_user(ctx.message.author.mention)
+            await ctx.send(f'Adding you to the game, {ctx.message.author}')
+        except ce.too_many_players:
+            await ctx.send('Cannot add you to the game, there are too many players')
+        except ce.already_playing:
+            await ctx.send('Cannot add you to the game, you are already in the game.')
 
-        await ctx.send(msg)
 
     @commands.command(description=GetActionDescription, enabled=False, aliases=['ActionPoints', 'AP'])
     @commands.has_any_role("Testing", "playing bullet tank")
@@ -69,43 +72,36 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
         """
         Returns how many action points the author has
         """
-        msg = "You do not have any action points"
-        if BT.check_if_playing(ctx.message.author.mention):
-            msg = BT.get_ac_points(ctx.message.author.mention)
-        await ctx.send(msg)
+        BT.check_if_playing(ctx.message.author.mention)
+        await ctx.send(BT.get_ac_points(ctx.message.author.mention))
+        
 
     @commands.command(description=MoveDescription, enabled=False)
     @commands.has_any_role("Testing", "playing bullet tank")
     async def Move(self, ctx, dir: str):
         """
-        Moves a player if possible
+        Moves a player
         """
-        msg = None
-        if BT.check_if_playing(ctx.message.author.mention):
-            if BT.move_player(ctx.message.author.mention, dir):
-                if dir == "N":
-                    await ctx.message.add_reaction("⬆️")
-                if dir == "E":
-                    await ctx.message.add_reaction("➡️")
-                if dir == "W":
-                    await ctx.message.add_reaction("⬅️")
-                if dir == "S":
-                    await ctx.message.add_reaction("⬇️")
-                if dir == "NE":
-                    await ctx.message.add_reaction("↗️")
-                if dir == "NW":
-                    await ctx.message.add_reaction("↖️")
-                if dir == "SE":
-                    await ctx.message.add_reaction("↘️")
-                if dir == "SW":
-                    await ctx.message.add_reaction("↙️")
-                msg = '**`SUCCESS`**'
-            else:
-                msg = "Unable to move you!"
-        else:
-            msg = "You're not playing right now!"
+        BT.check_if_playing(ctx.message.author.mention)
+        BT.move_player(ctx.message.author.mention, dir)
+        await ctx.message.add_reaction("✔️")
+        if dir == "N":            
+            await ctx.message.add_reaction("⬆️")
+        if dir == "E":
+            await ctx.message.add_reaction("➡️")
+        if dir == "W":
+            await ctx.message.add_reaction("⬅️")
+        if dir == "S":
+            await ctx.message.add_reaction("⬇️")
+        if dir == "NE":
+            await ctx.message.add_reaction("↗️")
+        if dir == "NW":
+            await ctx.message.add_reaction("↖️")
+        if dir == "SE":
+            await ctx.message.add_reaction("↘️")
+        if dir == "SW":
+            await ctx.message.add_reaction("↙️")
 
-        await ctx.send(msg)
 
     @commands.command(description=ShootDescription, enabled=False)
     @commands.has_any_role("Testing", "playing bullet tank")
@@ -113,16 +109,20 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
         """
         Shoots a target if possible
         """
-        if BT.check_if_playing(ctx.message.author.mention) and BT.check_if_playing(target.mention):
-            if BT.shoot_player(ctx.message.author.mention, target.mention):
-                msg = "Nice shot! Your Range has been reset to 1"
-                await ctx.message.add_reaction("🔫")
-            else:
-                msg = "No shot, too bad"
-                await ctx.message.add_reaction("❌")
-        else:
-            msg = "You or your target are not even playing!"
-        await ctx.send(msg)
+        shooter = ctx.message.author.mention
+        BT.check_if_playing(shooter)
+        try:            
+            BT.check_if_playing(target.mention)
+            BT.shoot_player(shooter, target.mention)
+            await ctx.message.add_reaction("🔫")
+
+        except ce.not_playing:
+            await ctx.send("Your target is not even playing?")
+            return
+        except ce.health_is_zero:
+            await ctx.message.add_reaction("☠️")
+            await ctx.send(f"{shooter} just murdered {target.mention}")
+
 
     @Shoot.error
     async def Shoot_error(self, ctx, error):
@@ -142,14 +142,10 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
         """
         Give an amount of action points to another player
         """
-        if BT.check_if_playing(ctx.message.author.mention):
-            if BT.send_ac_point(ctx.message.author.mention, target.mention):
-                msg = "You've given one of your action points to someone else!"
-            else:
-                msg = "You can't give them an action point."
-        else:
-            msg = "You're not even playing!"
-        await ctx.send(msg)
+        BT.check_if_playing(ctx.message.author.mention)
+        BT.send_ac_point(ctx.message.author.mention, target.mention)
+        await ctx.send("You've given one of your action points to someone else!")
+
 
     @commands.command(enabled=False)
     @commands.has_any_role("Testing", "playing bullet tank")
@@ -157,14 +153,14 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
         """
         Increase the range of your tank -- up to a max of 3
         """
-        if BT.check_if_playing(ctx.message.author.mention):
-            if BT.increase_range(ctx.message.author.mention):
-                msg = "You've increased your range!"
-            else:
-                msg = "Cannot increase range."
-        else:
-            msg = "You're not even playing!"
-        await ctx.send(msg)
+        BT.check_if_playing(ctx.message.author.mention)
+        try:
+            BT.increase_range(ctx.message.author.mention)
+            await ctx.send("You've increased your range!")
+        except ce.range_limited:
+            await ctx.send("You are already at max range.")
+            return
+
 
     @commands.command(description=RulesDescription)
     async def Rules(self, ctx):
@@ -181,27 +177,24 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
         Tells you where the fuck you are
         """
         auth = ctx.message.author.mention
-        if BT.check_if_playing(auth):
-            color_hash = colors[BT.get_user_color(auth)]
-            color_hex = "0X" + color_hash[1:]
-            async with ctx.typing():
+        BT.check_if_playing(auth)
+        
+        async with ctx.typing():
 
-                embed = discord.Embed(
-                    title=f"You're right the fuck there, at coordinates: {BT.where_the_fuck_am_i(auth)}",
-                    color=int(color_hex, 0),
-                    timestamp=ctx.message.created_at
-                )
-                embed.set_author(name=ctx.message.author,
-                                 icon_url=ctx.message.author.avatar_url)
+            embed = discord.Embed(
+                title=f"You're right the fuck there, at coordinates: {BT.where_the_fuck_am_i(auth)}",
+                color=BT.get_user_color(auth, hex=True),
+                timestamp=ctx.message.created_at
+            )
+            embed.set_author(name=ctx.message.author,
+                                icon_url=ctx.message.author.avatar_url)
 
-                await ctx.send(embed=embed)
-        else:
-            msg = "You're not even playing!"
-            await ctx.send(msg)
+            await ctx.send(embed=embed)
+
 
     @commands.command(description=ShowBoardDescription, enabled=False, aliases=['ShowMap', 'Map', 'Board', 'Show'])
     @commands.has_any_role("Testing", "playing bullet tank")
-    async def ShowBoard(self, ctx):
+    async def ShowBoard(self, ctx: commands.Context):
         """
         Sends the current board state to Discord
         """
@@ -210,32 +203,42 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
                 BT.update_grid().save(image_binary, 'PNG')
                 image_binary.seek(0)
                 embed = discord.Embed(title=f'{self.bot.user.name} Map', description=f"Players left alive: {BT.get_alive()}",
-                                      colour=ctx.author.colour, timestamp=ctx.message.created_at)
+                                      colour=BT.get_user_color(ctx.message.author.mention, hex=True), timestamp=ctx.message.created_at)
                 image = discord.File(fp=image_binary, filename='Board.png')
                 await ctx.send(embed=embed, file=image)
 
     @commands.command(name="RP", hidden=True)
     @commands.has_role("Administrator")
-    async def release_points(self, ctx, amount: int):
+    async def release_points(self, ctx, amount: int=1, player: discord.Member=None):
         """
         Admin only: Give points to players
         """
-        BT.admin_administer_points(amount)
-        await ctx.send(f"Everyone has received {amount} action points!")
+        if player is not None:
+            BT.check_if_playing(player.mention)
+            BT.distribute_action_points(player.mention, amount)
+            announcement = f"The Angel Jury has given {player} {amount} action points!"
+        else:
+            BT.admin_administer_points(amount)
+            announcement = f"Everyone has received {amount} action points!"
+        
+        embed = discord.Embed(
+                title=announcement,
+                color=discord.Colours.soft_red,
+                timestamp=ctx.message.created_at
+        )
+        await ctx.send(embed=embed)
+    
 
     @commands.command(name="AddPlayer", hidden=True)
     @commands.has_role("Administrator")
-    async def add_player(self, ctx, player: discord.Member, Color: str, CoordsX, CoordsY, Health: int, Actions: int):
+    async def add_player(self, ctx, player: discord.Member, debug: bool, Color: str, CoordsX, CoordsY, Health: int, Actions: int):
         """
         Admin only: Give points to players
         """
-        print(
-            f"{type(player)=}{player=}\n{type(Color)=}{Color=}\n{type(CoordsX)=}{CoordsX=}\n{type(Health)=}{Health=}")
         Coords = [int(CoordsX), int(CoordsY)]
-        if BT.add_user(player.mention, debug=True, color=Color, coords=Coords, health=Health, actions=Actions):
-            await ctx.send(f'Adding you to the game, {player.mention}')
-        else:
-            ctx.send(f'Cannot add player')
+        BT.add_user(player.mention, debug=debug, color=Color, coords=Coords, health=Health, actions=Actions)
+        await ctx.send(f'Adding you to the game, {player.mention}')
+
 
     @commands.command(hidden=True)
     @commands.has_role("Administrator")
@@ -256,6 +259,27 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
             await ctx.send("A new game has begun! It is too late to join.\nGood Luck to all.")
             await ctx.send(msg)
 
+    
+    @commands.command(hidden=True)
+    @commands.has_role("Administrator")
+    async def Export(self, ctx):
+        """
+        Admin only: Export the currently running game.
+        """
+        async with ctx.typing():
+            embed = discord.Embed(
+                title="Export of the current running game:",
+                color=0x808080,
+                timestamp=ctx.message.created_at
+            )
+            for player in BT.players_list:
+                embed.add_field(
+                    name=f"{player.user_id}",
+                    value=f"Color: {player.color}\Coordinates: {player.coordinates}\Health: {player.health}\nAction Points: {player.action_points}\nRange: {player.range}",
+                    inline=False
+                )
+            await ctx.send(embed)
+
     @NewGame.error
     async def NewGame_error(self, ctx, error):
         """A local Error Handler for the new game command.
@@ -269,12 +293,38 @@ class bullettank(commands.Cog, name="Bullet Tank Game"):
                 await ctx.send("You forgot to give me a grid size!\nTry NewGame 20 10")
         raise error
 
-    # async def cog_command_error(self, ctx, error):
-    #    if hasattr(ctx.command, 'on_error'):
-    #        return
-    #    if isinstance(error, )
-    #    return await super().cog_command_error(ctx, error)
+    @commands.Cog.listener()
+    async def on_command_error(self, ctx: commands.Context, e: commands.errors.CommandError) -> None:
+        command = ctx.command
 
+        if hasattr(e, "handled"):
+            print(f"Command {command} had its error already handled locally; ignoring.")
+            return
+        elif isinstance(e, commands.errors.CommandInvokeError):
+            if isinstance(e.original, ce.out_of_actions):
+                await ctx.send(self.make_embed(ctx, f"You can't do that! You don't have any action points."))
+            elif isinstance(e.original, ce.not_playing):
+                await ctx.send(self.make_embed(ctx, f"You are not currently playing! If you'd like to participate in Bullet Tank, wait for the current game to finish."))
+            elif isinstance(e.original, ce.out_of_bounds):
+                await ctx.send(self.make_embed(ctx, f"You can't move off the map!"))
+            elif isinstance(e.original, ce.occupied_space):
+                await ctx.send(self.make_embed(ctx, f"You can't move into someone else!"))
+            elif isinstance(e.original, ce.out_of_range):
+                await ctx.send(self.make_embed(ctx, f"You're not in range to do that."))
+            await ctx.message.add_reaction("❌")
+            return
+        print(
+            f"Command {command} invoked by {ctx.message.author} with error "
+            f"{e.__class__.__name__}: {e}"
+        )
+
+    async def make_embed(self, ctx, message):
+        embed = discord.Embed(
+            title=message,
+            color=self.bot.color,
+            timestamp=ctx.message.created_at
+        )
+        return embed
 
 def setup(bot):
     bot.add_cog(bullettank(bot))
@@ -283,6 +333,3 @@ def setup(bot):
 def teardown(bot):
     print('BulletTank Cog Successfully Unloaded')
 
-
-if __name__ == '__main__':
-    print("This is a Discord Cog, no need to run this as main.")

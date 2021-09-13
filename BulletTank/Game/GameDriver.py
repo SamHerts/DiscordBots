@@ -1,4 +1,5 @@
-
+from discord.ext.commands.core import check
+from utils import CustomExceptions as ce
 from numpy.random.mtrand import randint
 
 try:
@@ -100,7 +101,9 @@ def get_valid_random_coordinates(grid_size):
 
 
 def check_if_playing(player: str):
-    return get_index(player) is not None
+    if get_index(player) is None:
+        raise ce.not_playing
+
 
 
 def get_alive():
@@ -114,26 +117,38 @@ def add_user(player_name: str, debug=False, color=None, coords=None, health=None
     """
     Creates a Player object and appends it to the active player list
     """
-    if debug and not check_if_playing(player_name):
-        new_player = Player.Player(
+    try:
+        check_if_playing(player_name)
+        raise ce.already_playing
+    except ce.not_playing:
+        if debug:
+            new_player = Player.Player(
             user_id=player_name, color=color, coordinates=coords)
-        print(f"{new_player=}")
-        new_player.health = health
-        new_player.action_points = actions
-        players_list.append(new_player)
-        return True
-    elif not game_running and len(players_list) < number_of_players and not check_if_playing(player_name):
-        new_player = Player.Player(user_id=player_name, color=list(
+            print(f"{new_player=}")
+            new_player.health = health
+            new_player.action_points = actions
+            players_list.append(new_player)
+        elif not len(players_list) < number_of_players:
+            raise ce.too_many_players
+        else:
+            new_player = Player.Player(user_id=player_name, color=list(
             Display.colors)[len(players_list)], coordinates=[0, 0])
-        players_list.append(new_player)
-        return True
-    else:
-        return False
+            players_list.append(new_player)
 
 
 def move_player(user_id, dir: str):
     friend = get_index(user_id)
-    return players_list[friend].move(dir, get_all_coords(), grid_size)
+    try:
+        players_list[friend].move(dir, get_all_coords(), grid_size)
+    except ce.out_of_bounds:
+        print("Got out of bounds exception")
+        raise
+    except ce.occupied_space:
+        print("Got occupied space exception")
+        raise
+    except ce.out_of_actions:
+        print("Got out of actions exception")
+        raise
 
 
 def admin_administer_points(amount: int):
@@ -143,7 +158,12 @@ def admin_administer_points(amount: int):
 
 def send_ac_point(source, target):
     friend, enemy = get_index(source, target)
-    return players_list[friend].give_action(players_list[enemy]) and distribute_action_points(players_list[enemy], 1)
+    try:
+        players_list[friend].give_action(players_list[enemy]) 
+        distribute_action_points(players_list[enemy], 1)
+    except ce.out_of_actions:
+        print("Cannot give an action, because you don't have any!")
+        raise
 
 
 def get_ac_points(user_id):
@@ -153,18 +173,29 @@ def get_ac_points(user_id):
 
 def shoot_player(source, target):
     friend, enemy = get_index(source, target)
-    if players_list[friend].shoot(players_list[enemy]):
-        if players_list[enemy].take_damage():
-            return True
-        else:
-            del players_list[enemy]
-            return True
-    return False
+    try:
+        players_list[friend].shoot(players_list[enemy])
+        players_list[enemy].take_damage()
+            # del players_list[enemy]
+            #return True
+    except ce.out_of_actions:
+        print("You can't shoot them, you don't have any actions!")
+        raise
+    except ce.out_of_range:
+        print("You're not close enough to shoot them!")
+        raise
+    except ce.health_is_zero:
+        del players_list[enemy]
+        print("You've killed them!!")
+        raise
 
 
 def increase_range(user_id):
     index = get_index(user_id)
-    return players_list[index].increase_range()
+    try:
+        players_list[index].increase_range()
+    except:
+        raise
 
 
 def get_all_coords():
@@ -179,9 +210,14 @@ def where_the_fuck_am_i(author):
     return str(players_list[index].coordinates)
 
 
-def get_user_color(author):
+def get_user_color(author, hex=False):
     index = get_index(author)
-    return str(players_list[index].color)
+    if hex:
+        color_hash = Display.colors[players_list[index].color]
+        color_hex = "0X" + color_hash[1:]
+        return int(color_hex, 0)
+    else:
+        return str(players_list[index].color)
 
 
 def start_game(grid_length, grid_height, debug=False):
@@ -208,64 +244,4 @@ def start_game(grid_length, grid_height, debug=False):
     blank_grid = Display.draw_grid(grid_step=grid_length, grid_width=grid_length,
                                    grid_height=grid_height, debug=debug)
 
-    return "\n".join(str(i) for i in players_list)
-
-
-if __name__ == '__main__':
-    global_debug = True
-    x_size = 20
-    y_size = 10
-    print("Debugging Logic")
-    add_user("alpha", debug=global_debug)
-    add_user("beta", debug=global_debug)
-    add_user("gamma", debug=global_debug)
-    if True:
-        add_user("delta")
-        add_user("epsilon")
-        add_user("zeta")
-        add_user("eta")
-        add_user("theta")
-        add_user("iota")
-        add_user("kappa")
-        add_user("eleven")
-        add_user("twelve")
-        add_user("thirteen")
-    start_game(x_size, y_size, debug=global_debug)
-    print("Attempting to move alpha N: ",
-          move_player(players_list[0].user_id, "N"))
-    print("Attempting to move alpha W: ",
-          move_player(players_list[0].user_id, "W"))
-    print("Attempting to move alpha E: ",
-          move_player(players_list[0].user_id, "E"))
-    print("Showing grid\n")
-    update_grid().show()
-    print("Attempting to shoot beta: ", shoot_player("alpha", "beta"))
-    print("Attempting to increase range: ", increase_range("alpha"))
-    print("Attempting to shoot beta: ", shoot_player("alpha", "beta"))
-    print("Attempting to increase range: ", increase_range("alpha"))
-    print("Attempting to shoot beta: ", shoot_player("alpha", "beta"))
-    print("Showing grid\n")
-    update_grid().show()
-    print("Attempting to shoot beta: ", shoot_player("alpha", "beta"))
-    print("Attempting to increase range: ", increase_range("alpha"))
-    print("Attempting to shoot beta: ", shoot_player("alpha", "beta"))
-    print("Attempting to increase range: ", increase_range("alpha"))
-    print("Attempting to shoot beta: ", shoot_player("alpha", "beta"))
-    print("Showing grid\n")
-    update_grid().show()
-    print("Attempting to shoot beta: ", shoot_player("alpha", "beta"))
-    print("Attempting to increase range: ", increase_range("alpha"))
-    print("Attempting to shoot beta: ", shoot_player("alpha", "beta"))
-    print("Attempting to increase range: ", increase_range("alpha"))
-    print("Attempting to shoot beta: ", shoot_player("alpha", "beta"))
-    print("Showing grid\n")
-    update_grid().show()
-    print("Attempting to increase range: ", increase_range("alpha"))
-    print("Attempting to give an action point: ",
-          send_ac_point("alpha", "beta"))
-    print("Attempting to increase range: ", increase_range("alpha"))
-    print("Attempting to give an action point: ",
-          send_ac_point("alpha", "beta"))
-    print("Attempting to shoot beta: ", shoot_player("alpha", "beta"))
-    print("Showing grid\n")
-    update_grid().show()
+    return "\n\n".join(str(i) for i in players_list)

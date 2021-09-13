@@ -202,7 +202,7 @@ async def unload(ctx, cog=None):
 
             elif ext.endswith(".py") and not ext.startswith("_"):
                 try:
-                    bot.load_extension(f"Cogs.{ext[:-3]}")
+                    bot.unload_extension(f"Cogs.{ext[:-3]}")
                     embed.add_field(
                         name=f"Unloaded: `{ext}`",
                         value='\uFEFF',
